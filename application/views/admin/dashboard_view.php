@@ -4,7 +4,8 @@
 
         <div class="stats-grid">
 
-            <div class="stat-card stat-blue" style="--percent:75%">
+            <div class="stat-card stat-blue" style="--percent:75%"
+                onclick="window.location.href='<?= base_url('customer') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Users</div>
@@ -16,7 +17,8 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-blue" style="--percent:65%">
+            <div class="stat-card stat-blue" style="--percent:65%"  
+                onclick="window.location.href='<?= base_url('post') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Posts</div>
@@ -28,7 +30,8 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-green" style="--percent:80%">
+            <div class="stat-card stat-green" style="--percent:80%" 
+                onclick="window.location.href='<?= base_url('blog_category') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Blog Categories</div>
@@ -40,7 +43,8 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-yellow" style="--percent:70%">
+            <div class="stat-card stat-yellow" style="--percent:70%" 
+                onclick="window.location.href='<?= base_url('blogs') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Blogs</div>
@@ -52,7 +56,8 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-red" style="--percent:55%">
+            <div class="stat-card stat-red" style="--percent:55%" 
+                onclick="window.location.href='<?= base_url('order') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Orders</div>
@@ -64,7 +69,8 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-green" style="--percent:90%">
+            <div class="stat-card stat-green" style="--percent:90%"
+                onclick="window.location.href='<?= base_url('all_service') ?>'">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Services</div>
@@ -111,6 +117,7 @@
         border: 1px solid #e5e7eb;
         transition: all 0.35s ease;
         overflow: hidden;
+        cursor: pointer;
     }
 
     .stat-card:hover {

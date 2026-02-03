@@ -71,32 +71,63 @@ class Service extends CI_Controller
     }
     public function get_all_categories()
     {
-        $this->db->select('c1.id, c1.title, c2.title as parent_title');
+        $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
+        $limit = $this->input->get('limit') ? (int)$this->input->get('limit') : 10;
+        $search = $this->input->get('search') ? trim($this->input->get('search')) : '';
+        $offset = ($page - 1) * $limit;
+
+        // Build base query
+        $this->db->select('c1.id, c1.title, c1.parent_id, c2.title as parent_title');
         $this->db->from('service_category c1');
         $this->db->join('service_category c2', 'c1.parent_id = c2.id', 'left');
+        if (!empty($search)) {
+            $this->db->like('c1.title', $search);
+        }
+
+        // Get total count
+        $total = $this->db->count_all_results('', false); // false to not reset query
+
+        // Apply order and limit for data
         $this->db->order_by('c1.id', 'DESC');
+        $this->db->limit($limit, $offset);
         $query = $this->db->get();
+
+        $total_pages = ceil($total / $limit);
 
         echo json_encode([
             'status' => true,
-            'data' => $query->result()
+            'data' => $query->result(),
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $total_pages,
+                'total_records' => $total,
+                'limit' => $limit
+            ]
         ]);
     }
 
-    public function delete_category($id)
+    public function update_category()
     {
-        if (!$id) {
-            echo json_encode(['status' => false, 'message' => 'Invalid category ID']);
+        $id = $this->input->post('edit_id');
+        $title = $this->input->post('title');
+        $main_category = $this->input->post('main_category');
+
+        if (!$id || !$title) {
+            echo json_encode(['status' => false, 'message' => 'Invalid data']);
             return;
         }
 
-        // Optional: delete subcategories too if exist
-        $this->db->where('parent_id', $id)->delete('service_category');
+        $data = ['title' => $title];
+        if ($main_category) {
+            $data['parent_id'] = $main_category;
+        } else {
+            $data['parent_id'] = null;
+        }
 
-        // Delete main category
-        $this->db->where('id', $id)->delete('service_category');
+        $this->db->where('id', $id);
+        $this->db->update('service_category', $data);
 
-        echo json_encode(['status' => true, 'message' => 'Category deleted successfully']);
+        echo json_encode(['status' => true, 'message' => 'Category updated successfully']);
     }
     public function add_service()
     {

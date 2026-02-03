@@ -67,6 +67,7 @@ $route['admin/service/delete_service'] = 'admin/service/delete_service';
 $route['admin/service/get_services_ajax'] = 'admin/service/get_services_ajax';
 $route['edit_service/(:num)'] = 'admin/service/edit_service/$1';
 $route['update_service'] = 'admin/service/update_service';
+$route['service'] = 'home/service';
 $route['service/(:num)/(:any)'] = 'home/service/$1/$2';
 $route['service/(:num)'] = 'home/service/$1';
 $route['service_details/(:num)'] = 'home/details/$1';

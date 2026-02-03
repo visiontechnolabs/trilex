@@ -27,11 +27,89 @@
         <!-- BLOG LIST (AJAX ONLY – SINGLE SOURCE) -->
         <div class="row" id="blogContainer"></div>
 
+        <!-- PAGINATION CONTROLS -->
+        <div id="paginationWrapper" class="text-center my-5 w-100">
+            <div class="pagination-container">
+                <button id="prevBtn" class="page-btn" disabled>Prev</button>
+
+                <div id="pageNumbers" class="page-numbers"></div>
+
+                <button id="nextBtn" class="page-btn">Next</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <!-- ================= CSS (REQUIRED) ================= -->
 <style>
+    #paginationWrapper {
+        display: none;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 8px;
+    }
+
+    .page-num {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1.8px solid #6c7cff;
+        background: #ffffff;
+        color: #6c7cff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .page-num.active {
+        background: #1C768F;
+        color: #fff;
+        border-color: #1C768F;
+    }
+
+    .page-num:hover {
+        background: #1C768F;
+        color: #fff;
+    }
+
+    .page-btn {
+        padding: 8px 18px;
+        border-radius: 10px;
+        border: 2px solid #6c7cff;
+        background: #ffffff;
+        color: #6c7cff;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .page-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        color: #fff;
+    }
+
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    @media(max-width:576px) {
+        .page-num {
+            padding: 6px 10px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* ================= HERO SECTION ================= */
     .blog-hero {
         text-align: center;
         padding: 3rem 1rem;
@@ -70,6 +148,7 @@
         width: 100%;
         height: 220px;
         object-fit: cover;
+        object-position: center;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
     }
@@ -223,44 +302,118 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         const buttons = document.querySelectorAll('.category-btn');
         const blogContainer = document.getElementById('blogContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
 
-        // Attach click listeners FIRST
+        let currentPage = 1;
+        let selectedCategory = "all";
+        let totalPages = 1;
+
+        function loadBlogs(page = 1, category = "all") {
+            blogContainer.innerHTML =
+                '<div class="col-12 text-center py-5">' +
+                '<i class="fas fa-spinner fa-spin fa-2x"></i>' +
+                '<p>Loading blogs...</p></div>';
+
+            fetch("<?= base_url('blog/fetchBlogs'); ?>", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "category_id=" + encodeURIComponent(category) + "&page=" + page
+            })
+                .then(res => res.text())
+                .then(html => {
+                    blogContainer.innerHTML = html;
+
+                    const paginationInfo = document.getElementById('paginationInfo');
+                    if (paginationInfo) {
+                        totalPages = parseInt(paginationInfo.dataset.total) || 1;
+                        currentPage = parseInt(paginationInfo.dataset.current) || 1;
+                    }
+
+                    updatePaginationControls();
+                })
+                .catch(err => {
+                    blogContainer.innerHTML =
+                        '<div class="col-12 text-center text-danger py-5">Error loading blogs</div>';
+                    console.error(err);
+                });
+        }
+
+        function updatePaginationControls() {
+            const paginationWrapper = document.getElementById('paginationWrapper');
+            const pageNumbersDiv = document.getElementById('pageNumbers');
+
+            // Show / hide wrapper
+            if (totalPages <= 1) {
+                paginationWrapper.style.display = 'none';
+                return;
+            } else {
+                paginationWrapper.style.display = 'flex';
+            }
+
+            // Enable / disable prev-next
+            prevBtn.disabled = (currentPage <= 1);
+            nextBtn.disabled = (currentPage >= totalPages);
+
+            // Clear old numbers
+            pageNumbersDiv.innerHTML = "";
+
+            // Create page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                let btn = document.createElement("button");
+                btn.className = "page-num";
+                btn.innerText = i;
+
+                if (i === currentPage) {
+                    btn.classList.add("active");
+                }
+
+                btn.addEventListener("click", function () {
+                    currentPage = i;
+                    loadBlogs(currentPage, selectedCategory);
+                    window.scrollTo({ top: 0, behavior: "smooth" }); // nice UX
+                });
+
+                pageNumbersDiv.appendChild(btn);
+            }
+        }
+
+        // Category click
         buttons.forEach(btn => {
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
 
-                // Active state
                 buttons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
-                const categoryId = this.dataset.id;
+                selectedCategory = this.dataset.id;
+                currentPage = 1;
 
-                fetch("<?= base_url('blog/fetch'); ?>", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: "category_id=" + encodeURIComponent(categoryId)
-                })
-                    .then(res => res.text())
-                    .then(html => {
-                        blogContainer.innerHTML = html;
-                    })
-                    .catch(err => {
-                        blogContainer.innerHTML = '<div class="col-12 text-center">Error loading blogs</div>';
-                        console.error(err);
-                    });
+                loadBlogs(currentPage, selectedCategory);
             });
         });
 
-        // ✅ AUTO LOAD ALL BLOGS (AFTER listeners exist)
-        const allBtn = document.querySelector('.category-btn[data-id="all"]');
-        if (allBtn) {
-            allBtn.click();
-        }
+        // Next button
+        nextBtn.addEventListener('click', function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadBlogs(currentPage, selectedCategory);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        });
 
+        // Previous button
+        prevBtn.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                loadBlogs(currentPage, selectedCategory);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        });
+
+        // Auto load blogs
+        loadBlogs(currentPage, "all");
     });
 </script>

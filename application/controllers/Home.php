@@ -199,9 +199,14 @@ class Home extends CI_Controller
         $this->load->view('footer');
     }
 
-    public function service($id, $slug = null)
+    public function service($id = null, $slug = null)
     {
-        $query = $this->db->get_where('services', ['category_id' => $id]);
+        if ($id) {
+            $query = $this->db->get_where('services', ['category_id' => $id]);
+        } else {
+            // If no category id, get all services
+            $query = $this->db->get('services');
+        }
         $data['services'] = $query->result_array();
         $data['slug'] = $slug;
 

@@ -3,8 +3,6 @@
 class Login extends CI_Controller
 {
 
-
-
     public function __construct()
     {
 
@@ -85,16 +83,10 @@ class Login extends CI_Controller
         ]);
 
         // Send OTP via mail
-        // $subject = 'Your OTP for Email Verification';
-        // $message = "Dear $name,\n\nYour OTP is: $otp\n\nTeam Nexusexcel";
-        // $headers = "From: Nexusexcel <noreply@.com>\r\n";
-        // $headers .= "Reply-To: noreply@nexusexcel.com\r\n";
-        // $headers .= "X-Mailer: PHP/" . phpversion();
-
         $subject = 'Your OTP for Email Verification';
-        $message = "Dear $name,\n\nYour OTP is: $otp\n\nTeam Nexusexcel";
+        $message = "Dear $name,\n\nYour OTP is: $otp\n\nTeam Trilex";
 
-        $this->email->from('trilexadvisory@gmail.com', 'Nexusexcel');
+        $this->email->from('trilexadvisories@gmail.com', 'Trilex');
         $this->email->to($email);
         $this->email->subject($subject);
         $this->email->message($message);

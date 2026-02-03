@@ -26,16 +26,17 @@
   </div>
 </div>
 
-<!-- Add Category Modal -->
+<!-- Add/Edit Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add Category</h5>
+        <h5 class="modal-title" id="modalTitle">Add Category</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form id="addCategoryForm">
+          <input type="hidden" id="edit_id" name="edit_id">
           <div class="mb-3">
             <label class="form-label">Main Category (optional)</label>
             <select id="main_category" name="main_category" class="form-select">
@@ -49,7 +50,7 @@
           </div>
 
           <div class="text-end">
-            <button type="submit" class="btn btn-success">Add</button>
+            <button type="submit" class="btn btn-success" id="submitBtn">Add</button>
           </div>
         </form>
       </div>
@@ -63,128 +64,180 @@
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script>
   $(document).ready(function () {
-    $(document).ready(function () {
 
-      // ✅ Load all categories in table
-      function loadCategories() {
-        $.ajax({
-          url: "<?= base_url('admin/service/get_all_categories'); ?>",
-          type: "GET",
-          dataType: "json",
-          success: function (res) {
-            if (res.status && res.data.length > 0) {
-              let rows = '';
-              $.each(res.data, function (index, cat) {
-                rows += `
+    var selectedParent = null; // Variable to store selected parent for edit
+
+    // ✅ Load categories with pagination
+    function loadCategories(page = 1, search = '') {
+      $.ajax({
+        url: "<?= base_url('admin/service/get_all_categories'); ?>",
+        type: "GET",
+        data: { page: page, search: search, limit: 10 },
+        dataType: "json",
+        success: function (res) {
+          if (res.status && res.data.length > 0) {
+            let rows = '';
+            let startIndex = (page - 1) * 10 + 1;
+            $.each(res.data, function (index, cat) {
+              rows += `
               <tr>
-                <td>${index + 1}</td>
+                <td>${startIndex + index}</td>
                 <td>${cat.title}</td>
                 <td>${cat.parent_title ? cat.parent_title : '— Main Category —'}</td>
                 <td>
+                  <button class="btn btn-sm btn-warning me-1 editCategory" data-id="${cat.id}" data-title="${cat.title.replace(/"/g, '&quot;')}" data-parent="${cat.parent_id || ''}">
+                    <i class="bx bx-edit"></i>
+                  </button>
                   <button class="btn btn-sm btn-danger deleteCategory" data-id="${cat.id}">
                     <i class="bx bx-trash"></i>
                   </button>
                 </td>
               </tr>
             `;
-              });
-              $('#service_category').html(rows);
-            } else {
-              $('#service_category').html('<tr><td colspan="4" class="text-center text-muted">No categories found</td></tr>');
-            }
+            });
+            $('#service_category').html(rows);
+          } else {
+            $('#service_category').html('<tr><td colspan="4" class="text-center text-muted">No categories found</td></tr>');
           }
-        });
-      }
 
-      // ✅ Call on page load
-      loadCategories();
+          // Generate pagination
+          if (res.pagination) {
+            let pagination = '';
+            let current_page = res.pagination.current_page;
+            let total_pages = res.pagination.total_pages;
 
-      // Load main categories
-      function loadMainCategories() {
-        $.ajax({
-          url: "<?= base_url('admin/service/get_main_categories'); ?>",
-          type: "GET",
-          dataType: "json",
-          success: function (res) {
-            let options = '<option value="">-- None (Create Main Category) --</option>';
-            if (res.status && res.data.length > 0) {
-              $.each(res.data, function (i, cat) {
-                options += `<option value="${cat.id}">${cat.title}</option>`;
-              });
+            if (total_pages > 1) {
+              // Previous
+              pagination += `<li class="page-item ${current_page == 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${current_page - 1}">Previous</a>
+              </li>`;
+
+              // Pages
+              for (let i = 1; i <= total_pages; i++) {
+                pagination += `<li class="page-item ${i == current_page ? 'active' : ''}">
+                  <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>`;
+              }
+
+              // Next
+              pagination += `<li class="page-item ${current_page == total_pages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${current_page + 1}">Next</a>
+              </li>`;
             }
-            $('#main_category').html(options);
+
+            $('#pagination').html(pagination);
           }
-        });
-      }
-      $(document).on('click', '.deleteCategory', function () {
-        let id = $(this).data('id');
-        if (confirm('Are you sure you want to delete this category?')) {
-          $.ajax({
-            url: "<?= base_url('admin/service/delete_category/'); ?>" + id,
-            type: "POST",
-            dataType: "json",
-            success: function (res) {
-              alert(res.message);
-              if (res.status) loadCategories();
-            }
-          });
+        },
+        error: function(xhr, status, error) {
+          console.log('AJAX Error:', error);
+          $('#service_category').html('<tr><td colspan="4" class="text-center text-danger">Error loading categories. Check console for details.</td></tr>');
         }
       });
-      // Open modal and load categories
-      $('#addCategoryModal').on('show.bs.modal', function () {
-        loadMainCategories();
+    }
+
+    // ✅ Call on page load
+    loadCategories();
+
+    // Load main categories
+    function loadMainCategories() {
+      $.ajax({
+        url: "<?= base_url('admin/service/get_main_categories'); ?>",
+        type: "GET",
+        dataType: "json",
+        success: function (res) {
+          let options = '<option value="">-- None (Create Main Category) --</option>';
+          if (res.status && res.data.length > 0) {
+            $.each(res.data, function (i, cat) {
+              options += `<option value="${cat.id}">${cat.title}</option>`;
+            });
+          }
+          $('#main_category').html(options);
+          // Set selected parent if editing
+          if (selectedParent !== null) {
+            $('#main_category').val(selectedParent);
+            selectedParent = null;
+          }
+        }
       });
+    }
 
-      // Submit form
-      $('#addCategoryForm').on('submit', function (e) {
-        e.preventDefault();
+    // Edit category
+    $(document).on('click', '.editCategory', function () {
+      let id = $(this).data('id');
+      let title = $(this).data('title');
+      let parent = $(this).data('parent');
 
+      $('#edit_id').val(id);
+      $('input[name="title"]').val(title);
+      selectedParent = parent; // Store for later setting after categories load
+      $('#modalTitle').text('Edit Category');
+      $('#submitBtn').text('Update');
+      $('#addCategoryModal').modal('show');
+    });
+
+    // Delete category
+    $(document).on('click', '.deleteCategory', function () {
+      let id = $(this).data('id');
+      if (confirm('Are you sure you want to delete this category?')) {
         $.ajax({
-          url: "<?= base_url('admin/service/add_category'); ?>",
+          url: "<?= base_url('admin/service/delete_category/'); ?>" + id,
           type: "POST",
-          data: $(this).serialize(),
           dataType: "json",
           success: function (res) {
             alert(res.message);
-            if (res.status) {
-              $('#addCategoryForm')[0].reset();
-              $('#addCategoryModal').modal('hide');
-              loadMainCategories(); // reload dropdown
-            }
+            if (res.status) loadCategories();
           }
         });
-      });
-
-      function loadServices(page = 1, search = '') {
-  $.ajax({
-    url: "<?= base_url('admin/service/get_services_ajax'); ?>",
-    type: "GET",
-    data: { page: page, search: search },
-    dataType: "json",
-    success: function (res) {
-      $('#service_table').html(res.html);
-      $('#pagination').html(res.pagination);
-    }
-  });
-}
-
-// Initial Load
-loadServices();
-
-// Pagination Click
-$(document).on('click', '.page-link', function (e) {
-  e.preventDefault();
-  let page = $(this).data('page');
-  let search = $('#search').val();
-  loadServices(page, search);
-});
-
-// Search
-$('#search').on('keyup', function () {
-  loadServices(1, $(this).val());
-});
-
-
+      }
     });
+
+    // Open modal and load categories
+    $('#addCategoryModal').on('show.bs.modal', function () {
+      if (!$('#edit_id').val()) {
+        // Reset form for add
+        $('#addCategoryForm')[0].reset();
+        $('#edit_id').val('');
+        $('#modalTitle').text('Add Category');
+        $('#submitBtn').text('Add');
+      }
+      loadMainCategories();
+    });
+
+    // Submit form
+    $('#addCategoryForm').on('submit', function (e) {
+      e.preventDefault();
+
+      let url = $('#edit_id').val() ? "<?= base_url('admin/service/update_category'); ?>" : "<?= base_url('admin/service/add_category'); ?>";
+
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: $(this).serialize(),
+        dataType: "json",
+        success: function (res) {
+          alert(res.message);
+          if (res.status) {
+            $('#addCategoryForm')[0].reset();
+            $('#addCategoryModal').modal('hide');
+            loadMainCategories();
+            loadCategories();
+          }
+        }
+      });
+    });
+
+    // Pagination Click
+    $(document).on('click', '.page-link', function (e) {
+      e.preventDefault();
+      let page = $(this).data('page');
+      let search = $('#search').val();
+      loadCategories(page, search);
+    });
+
+    // Search
+    $('#search').on('keyup', function () {
+      loadCategories(1, $(this).val());
+    });
+
   });
 </script>

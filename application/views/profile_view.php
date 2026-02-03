@@ -1,3 +1,7 @@
+<style>
+    
+</style>
+
 <div class="container mt-3">
     <!-- Account Tab -->
     <div id="account" class="tab-content active">

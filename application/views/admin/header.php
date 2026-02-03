@@ -42,7 +42,7 @@
 
     <!-- App Styles -->
 
-    <link href="<?= base_url('assets/sass/app.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
 
     <link href="<?= base_url('assets/css/icons.css') ?>" rel="stylesheet">
 
@@ -59,6 +59,41 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
     <title>Admin-Trilex Advisory</title>
+
+    <style>
+        /* ====== CLEAN COLLAPSE BEHAVIOR ====== */
+
+        /* When sidebar is collapsed */
+        .wrapper.toggled .logo-text-wrapper {
+            display: none !important;
+            /* REMOVE TEXT COMPLETELY */
+        }
+
+        /* Make logo smaller in collapsed mode */
+        .wrapper.toggled .admin-logo {
+            width: 34px !important;
+            height: 34px !important;
+        }
+
+        /* Keep normal size when open */
+        .admin-logo {
+            width: 44px;
+            height: 44px;
+            transition: all 0.25s ease;
+        }
+
+        /* Nice logo container */
+        .logo-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #22c55e);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -68,15 +103,24 @@
         <div class="sidebar-wrapper" data-simplebar="true">
 
             <div class="sidebar-header">
-                <div>
-                    <img src="<?= base_url('assets/images/logo_new.png'); ?>" class="logo-icon ms-5 mt-2"
-                        style="width:100px;" alt="logo icon">
-                </div>
+                <div class="d-flex align-items-center gap-2 w-100">
 
-                <!-- <div>
-                    <h4 class="logo-text fw-bold ms-5">Trilex Advisory</h4>
-                </div> -->
-                <div class="mobile-toggle-icon ms-auto"><i class="bx bx-x"></i>
+                    <!-- Logo -->
+                    <div class="logo-wrapper">
+                        <img src="<?= base_url('assets/images/logo_new.png'); ?>" class="admin-logo" alt="Trilex Logo"
+                            style="border-radius: 50%;">
+                    </div>
+
+                    <!-- Text (will disappear when sidebar collapses) -->
+                    <div class="logo-text-wrapper">
+                        <h5 class="logo-text mb-0 fw-bold">Trilex</h5>
+                        <small class="text-muted">Admin Dashboard</small>
+                    </div>
+
+                    <div class="mobile-toggle-icon ms-auto"
+                        onclick="document.querySelector('.wrapper').classList.toggle('toggled')">
+                        <i class="bx bx-x"></i>
+                    </div>
                 </div>
             </div>
 
@@ -192,9 +236,34 @@
 
                 <nav class="navbar navbar-expand gap-2 align-items-center">
 
-                    <div class="mobile-toggle-menu d-flex"><i class='bx bx-menu'></i>
-
-                    </div>
+                    <button class="mobile-toggle-menu" type="button"
+                        style="border: none; background: none; font-size: 26px; color: #404142; cursor: pointer;"
+                        onclick="
+                        var wrapper = document.querySelector('.wrapper'); 
+                        wrapper.classList.toggle('toggled'); 
+                        if (window.innerWidth > 1024) 
+                            { 
+                                var logo = document.querySelector('.admin-logo'); 
+                                var text = document.querySelector('.logo-text-wrapper'); 
+                                
+                                if (logo && text) 
+                                { 
+                                    if (wrapper.classList.contains('toggled')) 
+                                    { 
+                                        logo.style.display = 'block'; 
+                                        logo.style.width = '40px'; 
+                                        text.style.display = 'none'; 
+                                    } 
+                                     else 
+                                    { 
+                                        logo.style.display = 'block'; 
+                                        logo.style.width = '100px'; 
+                                        text.style.display = 'block'; 
+                                    } 
+                                } 
+                            }">
+                        <i class='bx bx-menu'></i>
+                    </button>
                 </nav>
             </div>
         </header>

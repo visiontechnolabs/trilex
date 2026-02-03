@@ -30,11 +30,7 @@ if ($this->session->userdata('admin')) {
 
         if ($this->form_validation->run() === true) {
 
-
-
 			$password = md5($this->input->post('password'));
-
-
 
 			$email = $this->input->post('mobile');
 
@@ -42,23 +38,14 @@ if ($this->session->userdata('admin')) {
 
 			$where = array('mobile' => $email, 'password' => $password,'isActive'=>1);
 
-
-
 			$user = $this->general_model->getOne('users', $where);
-
 
 			//  echo "<pre>";
 
 			//  print_r($user);die;
 
-
 			if ($user) {
-
-
-				
 				$session = array(
-
-
 
 					'id' => $user->id,
 
@@ -73,20 +60,13 @@ if ($this->session->userdata('admin')) {
 
 			} else {
 
-
-
 				$this->session->set_flashdata('error', 'Invalid email or password. Please try again.');
 
 				redirect('admin', 'refresh');
 
 			}
 
-
-
-
-
 		}
-
 
         // $this->load->view('admin/header');
         $this->load->view('admin/login_view');
