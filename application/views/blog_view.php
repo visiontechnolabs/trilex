@@ -24,6 +24,22 @@
             </div>
         </div>
 
+        <!-- SEARCH BAR -->
+        <div class="search-wrapper mb-4">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search blogs by title or content..."
+                    class="search-input">
+
+                <button id="searchBtn" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <div id="searchLoader" class="search-loader" style="display:none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+
         <!-- BLOG LIST (AJAX ONLY – SINGLE SOURCE) -->
         <div class="row" id="blogContainer"></div>
 
@@ -182,6 +198,63 @@
         color: #777;
     }
 
+    /* ================= SEARCH BAR ================= */
+    /* ========== MODERN SEARCH BAR ========== */
+    .search-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .search-box {
+        position: relative;
+        width: 100%;
+        max-width: 650px;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 50px;
+        border: 2px solid #6c7cff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        padding: 6px;
+    }
+
+    .search-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border-radius: 50px;
+    }
+
+    .search-input:focus {
+        outline: none;
+    }
+
+    .search-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, var(--secondary-color), var(--dark-color));
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s ease;
+    }
+
+    .search-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .search-loader {
+        position: absolute;
+        right: 70px;
+        color: #6c7cff;
+    }
+
     /* ================= CATEGORY FILTER UI ================= */
 
     .category-filter {
@@ -309,22 +382,107 @@
 
         let currentPage = 1;
         let selectedCategory = "all";
+        let searchQuery = "";
         let totalPages = 1;
+        let searchTimeout;
+        let serverSearch = "";
 
-        function loadBlogs(page = 1, category = "all") {
+        // Function to perform search with debouncing
+        function performSearch() {
+            searchQuery = searchInput.value.trim().toLowerCase();
+            currentPage = 1;
+
+            document.getElementById('searchLoader').style.display = 'block';
+
+            // Load blogs first
+            loadBlogs(currentPage, selectedCategory, searchQuery);
+        }
+
+        // Debounced search function
+        function debouncedSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(performSearch, 500); // 500ms delay
+        }
+
+        function loadBlogs(page = 1, category = "all", search = "") {
             blogContainer.innerHTML =
                 '<div class="col-12 text-center py-5">' +
                 '<i class="fas fa-spinner fa-spin fa-2x"></i>' +
                 '<p>Loading blogs...</p></div>';
 
+            // Show search loader if this is a search operation
+            const searchLoader = document.getElementById('searchLoader');
+            if (search.trim() !== "") {
+                searchLoader.style.display = 'block';
+            }
+
             fetch("<?= base_url('blog/fetchBlogs'); ?>", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "category_id=" + encodeURIComponent(category) + "&page=" + page
+
+                body: "category_id=" + encodeURIComponent(category) +
+                    "&page=" + page +
+                    "&search=" + encodeURIComponent(serverSearch)
             })
                 .then(res => res.text())
                 .then(html => {
-                    blogContainer.innerHTML = html;
+
+                    let tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = html;
+
+                    // 👉 EXACT MATCH to your controller output
+                    let blogs = Array.from(tempDiv.querySelectorAll(".col-lg-4.col-md-6"));
+
+                    let query = searchQuery.toLowerCase().trim();
+
+                    // If user typed something
+                    if (query.length > 0) {
+
+                        let startsWith = [];
+                        let contains = [];
+
+                        blogs.forEach(blog => {
+
+                            let titleEl = blog.querySelector("h5"); // your actual title tag
+
+                            if (!titleEl) return;
+
+                            let title = titleEl.innerText.toLowerCase();
+
+                            if (title.startsWith(query)) {
+                                startsWith.push(blog);
+                            }
+                            else if (title.includes(query)) {
+                                contains.push(blog);
+                            }
+                        });
+
+                        blogContainer.innerHTML = "";
+
+                        // 👉 REAL "No blogs found" CONDITION
+                        if (startsWith.length === 0 && contains.length === 0) {
+
+                            blogContainer.innerHTML = `
+            <div class="col-12">
+                <div class="no-blog-box">
+                    <i class="fas fa-search"></i>
+                    <h4>No blogs found</h4>
+                    <p>No blogs match "<strong>${query}</strong>"</p>
+                </div>
+            </div>
+            `;
+
+                        } else {
+                            // Show results in correct priority
+                            startsWith.forEach(b => blogContainer.appendChild(b));
+                            contains.forEach(b => blogContainer.appendChild(b));
+                        }
+
+                    }
+                    // 👉 If search box is empty → show normal results
+                    else {
+                        blogContainer.innerHTML = html;
+                    }
 
                     const paginationInfo = document.getElementById('paginationInfo');
                     if (paginationInfo) {
@@ -333,10 +491,12 @@
                     }
 
                     updatePaginationControls();
+                    searchLoader.style.display = 'none';
                 })
                 .catch(err => {
                     blogContainer.innerHTML =
                         '<div class="col-12 text-center text-danger py-5">Error loading blogs</div>';
+                    searchLoader.style.display = 'none';
                     console.error(err);
                 });
         }
@@ -372,7 +532,7 @@
 
                 btn.addEventListener("click", function () {
                     currentPage = i;
-                    loadBlogs(currentPage, selectedCategory);
+                    loadBlogs(currentPage, selectedCategory, searchQuery);
                     window.scrollTo({ top: 0, behavior: "smooth" }); // nice UX
                 });
 
@@ -391,7 +551,7 @@
                 selectedCategory = this.dataset.id;
                 currentPage = 1;
 
-                loadBlogs(currentPage, selectedCategory);
+                loadBlogs(currentPage, selectedCategory, searchQuery);
             });
         });
 
@@ -399,7 +559,7 @@
         nextBtn.addEventListener('click', function () {
             if (currentPage < totalPages) {
                 currentPage++;
-                loadBlogs(currentPage, selectedCategory);
+                loadBlogs(currentPage, selectedCategory, searchQuery);
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
         });
@@ -408,12 +568,33 @@
         prevBtn.addEventListener('click', function () {
             if (currentPage > 1) {
                 currentPage--;
-                loadBlogs(currentPage, selectedCategory);
+                loadBlogs(currentPage, selectedCategory, searchQuery);
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
         });
 
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Dynamic search on input (with debouncing)
+        searchInput.addEventListener('input', debouncedSearch);
+
+        // Search button click (immediate search)
+        searchBtn.addEventListener('click', function () {
+            clearTimeout(searchTimeout); // Cancel any pending debounced search
+            performSearch();
+        });
+
+        // Enter key press (immediate search)
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout); // Cancel any pending debounced search
+                performSearch();
+            }
+        });
+
         // Auto load blogs
-        loadBlogs(currentPage, "all");
+        loadBlogs(currentPage, "all", searchQuery);
     });
 </script>

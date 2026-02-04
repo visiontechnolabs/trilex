@@ -10,6 +10,63 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Theme Script - Must run before any CSS -->
+    <script>
+        // Immediately set theme to prevent flash
+        (function () {
+            try {
+                // Add a class to hide content until theme is ready
+                document.documentElement.classList.add('theme-loading');
+
+                var savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-bs-theme', savedTheme);
+
+                // Pre-apply critical dark styles to prevent flash
+                if (savedTheme === 'dark') {
+                    var style = document.createElement('style');
+                    style.id = 'critical-theme-styles';
+                    style.textContent = `
+                        body { background-color: #212529 !important; color: #dee2e6 !important; }
+                        .sidebar-wrapper { background-color: #1a202c !important; }
+                        .main-header { background-color: #1a202c !important; }
+                        .page-wrapper { background-color: #212529 !important; }
+                        .card { background-color: #2d3748 !important; border-color: #4a5568 !important; color: #e2e8f0 !important; }
+                        .bg-white, .bg-light { background-color: #2d3748 !important; }
+                        .text-dark { color: #e2e8f0 !important; }
+                        .table { background-color: #2d3748 !important; color: #e2e8f0 !important; }
+                        .table thead th { background-color: #1a202c !important; color: #e2e8f0 !important; }
+                        .form-control, .form-select { background-color: #374151 !important; border-color: #4a5568 !important; color: #e2e8f0 !important; }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                // Remove loading class after a short delay to ensure styles are applied
+                setTimeout(function () {
+                    document.documentElement.classList.remove('theme-loading');
+                }, 10);
+
+            } catch (e) {
+                // Fallback if localStorage is not available
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+                document.documentElement.classList.remove('theme-loading');
+            }
+        })();
+    </script>
+
+    <style>
+        .theme-loading * {
+            visibility: hidden !important;
+        }
+
+        .theme-loading {
+            background: #fff !important;
+        }
+
+        [data-bs-theme="dark"].theme-loading {
+            background: #212529 !important;
+        }
+    </style>
+
     <!--favicon-->
 
     <link rel="icon" href="<?= base_url('assets/images/android-chrome-192x192.png') ?>" type="image/png">
@@ -107,8 +164,10 @@
 
                     <!-- Logo -->
                     <div class="logo-wrapper">
-                        <img src="<?= base_url('assets/images/logo_new.png'); ?>" class="admin-logo" alt="Trilex Logo"
-                            style="border-radius: 50%;">
+                        <a href="<?= base_url('home') ?>">
+                            <img src="<?= base_url('assets/images/logo_new.png'); ?>" class="admin-logo"
+                                alt="Trilex Logo" style="border-radius: 50%;">
+                        </a>
                     </div>
 
                     <!-- Text (will disappear when sidebar collapses) -->
@@ -263,6 +322,13 @@
                                 } 
                             }">
                         <i class='bx bx-menu'></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
+                    <button class="theme-toggle-btn" type="button" id="themeToggle"
+                        style="border: none; background: none; font-size: 20px; color: #404142; cursor: pointer; margin-left: 10px; padding: 8px; border-radius: 50%; transition: all 0.3s ease;"
+                        title="Toggle Theme">
+                        <i class='bx bx-moon' id="themeIcon"></i>
                     </button>
                 </nav>
             </div>

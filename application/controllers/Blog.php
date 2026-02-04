@@ -57,6 +57,7 @@ class Blog extends CI_Controller
     {
         $categoryId = $this->input->post('category_id');
         $page = (int) $this->input->post('page');
+        $search = $this->input->post('search');
 
         if ($page < 1)
             $page = 1;
@@ -72,6 +73,13 @@ class Blog extends CI_Controller
             $this->db->where('category_id', $categoryId);
         }
 
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('title', $search);
+            $this->db->or_like('description', $search);
+            $this->db->group_end();
+        }
+
         // Get total count FIRST
         $totalRows = $this->db->count_all_results();
         $totalPages = ceil($totalRows / $limit);
@@ -82,6 +90,13 @@ class Blog extends CI_Controller
 
         if ($categoryId !== 'all') {
             $this->db->where('category_id', $categoryId);
+        }
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('title', $search);
+            $this->db->or_like('description', $search);
+            $this->db->group_end();
         }
 
         $blogs = $this->db
@@ -139,6 +154,19 @@ class Blog extends CI_Controller
         if (!$data['blogs']) {
             show_404();
         }
+
+        // Get related blogs from the same category (excluding current blog)
+        $data['related_blogs'] = $this->db
+            ->select('blogs.*, blog_category.title as category_title')
+            ->from('blogs')
+            ->join('blog_category', 'blog_category.id = blogs.category_id', 'left')
+            ->where('blogs.category_id', $data['blogs']->category_id)
+            ->where('blogs.id !=', $id)
+            ->where('blogs.isActive', 1)
+            ->order_by('blogs.created_on', 'DESC')
+            ->limit(4)
+            ->get()
+            ->result();
 
         $this->load->view('header');
         $this->load->view('blog_details', $data);

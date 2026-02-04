@@ -1414,22 +1414,24 @@
         /* mobile desing */
         /* Mobile Header */
         .mobile-header {
-            display: none;
             background: white;
-            padding: 0px 10px;
-            /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+            padding: 8px 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
+            z-index: 1050;
+            height: 60px;
+            display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .mobile-logo {
-            height: 100px;
-            width: auto;
+            width: 50px;
+            height: 50px;
+            transition: all 0.25s ease;
         }
 
         .menu-toggle {
@@ -1438,7 +1440,10 @@
             font-size: 24px;
             color: var(--primary-color);
             cursor: pointer;
-            padding: 5px;
+            padding: 10px;
+            position: relative;
+            z-index: 1060;
+            pointer-events: auto;
         }
 
         /* Mobile Sidebar */
@@ -1451,12 +1456,17 @@
             background: white;
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
             transition: right 0.3s ease;
-            z-index: 1001;
+            z-index: 1030;
             overflow-y: auto;
+            transform: translateZ(0);
+            /* Force hardware acceleration */
+            display: block;
+            /* Hidden by default */
         }
 
         .mobile-sidebar.active {
             right: 0;
+            transform: translateZ(0);
         }
 
         .sidebar-overlay {
@@ -1469,7 +1479,11 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 1000;
+            z-index: 1025;
+            transform: translateZ(0);
+            /* Force hardware acceleration */
+            display: none;
+            /* Hidden by default */
         }
 
         .mt-3 {
@@ -1479,6 +1493,21 @@
         .sidebar-overlay.active {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(3px);
+        }
+
+        /* Ensure sidebar appears above all content */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        /* Prevent content from showing through sidebar */
+        .mobile-sidebar.active {
+            z-index: 1030;
+        }
+
+        .sidebar-overlay.active {
+            z-index: 1025;
         }
 
         .sidebar-header {
@@ -1543,6 +1572,99 @@
             border-left: 4px solid var(--primary-color);
         }
 
+        /* Mobile Sidebar Dropdown Styles */
+        .sidebar-dropdown {
+            position: relative;
+        }
+
+        .sidebar-dropdown-toggle {
+            justify-content: space-between !important;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-dropdown.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-submenu {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #f8f9fa;
+        }
+
+        .sidebar-dropdown.active .sidebar-submenu {
+            display: block;
+        }
+
+        .sidebar-submenu-item {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .sidebar-submenu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px 15px 40px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-submenu-toggle:hover {
+            background: linear-gradient(to right, #f0f2f5, #ffffff);
+            color: var(--primary-color);
+            padding-left: 45px;
+        }
+
+        .submenu-icon {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-submenu-item.active .submenu-icon {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-sub-submenu {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #ffffff;
+        }
+
+        .sidebar-submenu-item.active .sidebar-sub-submenu {
+            display: block;
+        }
+
+        .sidebar-sub-submenu li {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sidebar-sub-submenu a {
+            display: block;
+            padding: 12px 20px 12px 60px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .sidebar-sub-submenu a:hover {
+            background: linear-gradient(to right, #f0f2f5, #ffffff);
+            color: var(--primary-color);
+            padding-left: 65px;
+        }
+
         /* Bottom Navigation for Mobile - Simplified */
         #bottomNav {
             position: fixed;
@@ -1603,6 +1725,28 @@
             padding-top: 0;
         }
 
+        /* Desktop styles - ensure mobile elements are hidden */
+        @media (min-width: 769px) {
+            .mobile-header {
+                display: none !important;
+            }
+
+            .mobile-sidebar {
+                right: -100%;
+                display: block;
+            }
+
+            .sidebar-overlay {
+                display: block;
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            #bottomNav {
+                display: none !important;
+            }
+        }
+
         /* Responsive adjustments */
         @media (max-width: 991px) {
             .navbar-nav {
@@ -1634,7 +1778,6 @@
             /* Add padding for fixed header and bottom nav */
             .content-wrapper {
                 padding-top: 70px;
-                padding-bottom: 80px;
             }
 
             /* Adjust dropdown menu for mobile */
@@ -1658,6 +1801,80 @@
 
         .dropdown-submenu:hover>.dropdown-menu {
             display: block;
+        }
+
+        /* Mobile adjustments for submenus */
+        @media (max-width: 768px) {
+            .dropdown-submenu>.dropdown-menu {
+                position: static !important;
+                display: none;
+                margin-left: 20px;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+            }
+
+            .dropdown-submenu>.dropdown-menu.show {
+                display: block;
+            }
+
+            .page {
+                padding-bottom: 110px;
+            }
+
+            footer {
+                margin-bottom: 0;
+            }
+
+            #bottomNav {
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                background: white;
+                border-radius: 20px;
+                display: block;
+                padding: 10px 5px;
+                z-index: 999;
+                box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
+            }
+
+            #bottomNav ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+
+            #bottomNav a {
+                color: var(--primary-color);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-size: 0.85rem;
+                text-decoration: none;
+                padding: 8px;
+                transition: all 0.3s ease;
+            }
+
+            #bottomNav i {
+                font-size: 1.4rem;
+                margin-bottom: 4px;
+            }
+
+            #bottomNav a.active {
+                color: white;
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                border-radius: 15px;
+                padding: 8px 12px;
+                transform: scale(1.05);
+            }
+
+            .content-wrapper {
+                padding-top: 70px;
+            }
         }
 
         /* Hover colors */
@@ -2399,8 +2616,37 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li><a href="<?= base_url('service'); ?>" class="sidebar-link"><i class="fas fa-concierge-bell"></i>
-                    Services</a></li>
+            <li class="sidebar-dropdown">
+                <a href="#" class="sidebar-link sidebar-dropdown-toggle">
+                    <i class="fas fa-concierge-bell"></i> Services <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <?php foreach ($main_categories as $main): ?>
+                        <li class="sidebar-submenu-item">
+                            <a href="#" class="sidebar-submenu-toggle">
+                                <?= htmlspecialchars($main['title'], ENT_QUOTES, 'UTF-8'); ?>
+                                <?php if (!empty($subcategories[$main['id']])): ?>
+                                    <i class="fas fa-chevron-right submenu-icon"></i>
+                                <?php endif; ?>
+                            </a>
+                            <?php if (!empty($subcategories[$main['id']])): ?>
+                                <ul class="sidebar-sub-submenu">
+                                    <?php foreach ($subcategories[$main['id']] as $sub):
+                                        $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $sub['title']));
+                                        $slug = trim($slug, '-');
+                                        ?>
+                                        <li>
+                                            <a href="<?= base_url('service/' . $sub['id'] . '/' . $slug); ?>">
+                                                <?= htmlspecialchars($sub['title'], ENT_QUOTES, 'UTF-8'); ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
             <li><a href="<?= base_url('blog'); ?>" class="sidebar-link"><i class="fas fa-blog"></i> Blogs</a></li>
             <li><a href="<?= base_url('about'); ?>" class="sidebar-link"><i class="fas fa-info-circle"></i> About</a>
             </li>
@@ -2442,3 +2688,95 @@
             </li>
         </ul>
     </nav>
+
+    <script>
+        (function () {
+
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+
+            // Close only when clicking FINAL service links
+            const finalLinks = document.querySelectorAll('.sidebar-sub-submenu a');
+
+            function closeSidebar() {
+                mobileSidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+
+                document.querySelectorAll('.sidebar-dropdown.active, .sidebar-submenu-item.active')
+                    .forEach(item => item.classList.remove('active'));
+            }
+
+            // ===== OPEN / CLOSE SIDEBAR =====
+            menuToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (mobileSidebar.classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    mobileSidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.classList.add('sidebar-open');
+                }
+            });
+
+            // Close when clicking overlay
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            // Close when clicking X button
+            sidebarClose.addEventListener('click', closeSidebar);
+
+            // Close ONLY when clicking final service link
+            finalLinks.forEach(link => {
+                link.addEventListener('click', closeSidebar);
+            });
+
+            // ===== DROPDOWN FIX (MOST IMPORTANT PART) =====
+            const sidebarDropdownToggles = document.querySelectorAll('.sidebar-dropdown-toggle');
+            const sidebarSubmenuToggles = document.querySelectorAll('.sidebar-submenu-toggle');
+
+            // FIX: Services click will NOT close sidebar
+            sidebarDropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();   // 🔥 CRITICAL
+
+                    const parent = this.closest('.sidebar-dropdown');
+                    parent.classList.toggle('active');
+                });
+            });
+
+            // Sub-category toggle fix
+            sidebarSubmenuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const parent = this.closest('.sidebar-submenu-item');
+                    parent.classList.toggle('active');
+                });
+            });
+
+            // ===== FIX: CLICK OUTSIDE CLOSES SIDEBAR =====
+            document.addEventListener('click', function (e) {
+
+                const clickedInsideSidebar = mobileSidebar.contains(e.target);
+                const clickedOnToggle = menuToggle.contains(e.target);
+                const clickedOnServices = e.target.closest('.sidebar-dropdown-toggle');
+
+                // Close ONLY if clicked completely outside AND not on Services
+                if (!clickedInsideSidebar && !clickedOnToggle && !clickedOnServices) {
+                    closeSidebar();
+                }
+            });
+
+            // Prevent clicks inside sidebar from closing it
+            mobileSidebar.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+        })();
+    </script>
