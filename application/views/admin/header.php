@@ -13,7 +13,7 @@
     <!-- Theme Script - Must run before any CSS -->
     <script>
         // Immediately set theme to prevent flash
-        (function () {
+        (function() {
             try {
                 // Add a class to hide content until theme is ready
                 document.documentElement.classList.add('theme-loading');
@@ -41,7 +41,7 @@
                 }
 
                 // Remove loading class after a short delay to ensure styles are applied
-                setTimeout(function () {
+                setTimeout(function() {
                     document.documentElement.classList.remove('theme-loading');
                 }, 10);
 
@@ -268,6 +268,14 @@
                         <div class="menu-title">Service Category</div>
                     </a>
                 </li>
+
+                <li>
+                    <a href="<?= base_url('admin/paymentsettings'); ?>" class="">
+                        <div class="parent-icon"><i class='bx bx-qr'></i></div>
+                        <div class="menu-title">Payment QR Settings</div>
+                    </a>
+                </li>
+
 
 
                 <li>

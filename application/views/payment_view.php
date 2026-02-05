@@ -294,8 +294,10 @@
                     <span class="icon">📱</span> Scan QR Code
                 </h5>
                 <div class="qr-code-container">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=UPI%3A8800000000@paytm"
+                    <img
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=<?= urlencode($qr->qr_data); ?>"
                         alt="QR Code" class="qr-code-image">
+
                     <div class="qr-instruction"><b>Use any UPI app to scan and complete payment</b></div>
                     <div class="upi-icons">
                         <img src="<?= base_url('assets/images/phonpay.png'); ?>" alt="PhonePe" class="upi-icon">
@@ -351,7 +353,7 @@
 
 
 <script>
-    document.getElementById('receiptInput').addEventListener('change', function () {
+    document.getElementById('receiptInput').addEventListener('change', function() {
         const fileNameDiv = document.getElementById('fileName');
         if (this.files.length) {
             fileNameDiv.textContent = '📄 ' + this.files[0].name;
@@ -361,8 +363,8 @@
             fileNameDiv.classList.remove('show');
         }
     });
-    $(document).ready(function () {
-        $("#paymentForm").on("submit", function (e) {
+    $(document).ready(function() {
+        $("#paymentForm").on("submit", function(e) {
             e.preventDefault();
 
             var fileInput = $("#receiptInput")[0].files.length;
@@ -385,10 +387,10 @@
                 contentType: false,
                 processData: false,
                 dataType: "json",
-                beforeSend: function () {
+                beforeSend: function() {
                     $(".btn-submit").prop("disabled", true).text("Processing...");
                 },
-                success: function (response) {
+                success: function(response) {
                     $(".btn-submit").prop("disabled", false).text("Submit Payment");
 
                     if (response.status === "success") {
@@ -414,7 +416,7 @@
                     }
                 },
 
-                error: function () {
+                error: function() {
                     $(".btn-submit").prop("disabled", false).text("Submit Payment");
                     Swal.fire({
                         icon: "error",
@@ -425,5 +427,4 @@
             });
         });
     });
-
 </script>

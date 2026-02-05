@@ -62,6 +62,11 @@
 
 
 <style>
+    :root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
+
     .container {
         max-width: 1200px;
         /* margin-top: 3rem; */
@@ -73,7 +78,7 @@
     .hero {
         text-align: center;
         padding: 3rem 1rem;
-        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #fff;
         border-radius: 16px;
         margin-bottom: 1rem;

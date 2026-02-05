@@ -15,7 +15,6 @@ class Product extends CI_Controller
         $this->load->helper('url');
 
         $this->load->model('general_model');
-
     }
 
     public function index()
@@ -162,6 +161,9 @@ class Product extends CI_Controller
             show_404();
         }
 
+        // FETCH DYNAMIC QR FROM DATABASE
+        $data['qr'] = $this->db->get('payment_settings')->row();
+
         $this->load->view('header');
         $this->load->view('payment_view', $data);
         $this->load->view('footer');
@@ -211,6 +213,4 @@ class Product extends CI_Controller
 
         echo json_encode(['status' => 'success']);
     }
-
-
 }

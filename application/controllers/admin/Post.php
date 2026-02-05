@@ -24,11 +24,7 @@ class Post extends CI_Controller
 
 
             redirect('admin');
-
-
-
         }
-
     }
 
     public function index()
@@ -37,29 +33,37 @@ class Post extends CI_Controller
         $this->load->view('admin/header');
         $this->load->view('admin/post_view');
         $this->load->view('admin/footer');
-
     }
     public function fetch_posts()
     {
         $search = $this->input->get('search');
-        $page = $this->input->get('page') ?? 1;
-        $limit = 10;
+        $page   = (int) $this->input->get('page') ?: 1;
+        $limit  = 5;
         $offset = ($page - 1) * $limit;
 
-        // Count total
-        $this->db->like('title', $search);
-        $total = $this->db->get('posts')->num_rows();
+        /* ----------- CORRECT COUNT (MOST IMPORTANT FIX) ----------- */
+        $this->db->from('posts');
+        if (!empty($search)) {
+            $this->db->like('title', $search);
+        }
+        $total = $this->db->count_all_results();
 
-        // Fetch paginated
-        $this->db->like('title', $search);
+        /* ----------- FRESH QUERY TO FETCH DATA ----------- */
+        $this->db->from('posts');
+        if (!empty($search)) {
+            $this->db->like('title', $search);
+        }
+        $this->db->order_by('id', 'DESC');
         $this->db->limit($limit, $offset);
-        $posts = $this->db->get('posts')->result();
 
-        $html = '';
+        $posts = $this->db->get()->result();
+
+        /* ----------- BUILD TABLE HTML ----------- */
+        $html  = '';
         $index = $offset + 1;
 
         foreach ($posts as $post) {
-            // Status column UI
+
             $status_ui = $post->isActive
                 ? '<div class="d-flex align-items-center text-success">
                     <i class="bx bx-radio-circle-marked align-middle font-18 me-1"></i>
@@ -70,23 +74,24 @@ class Post extends CI_Controller
                     <span>Inactive</span>
                </div>';
 
-            // Action column (Edit + Eye/Eye-slash)
             $eye_icon = $post->isActive
-                ? '<a href="javascript:void(0);" class="toggle-status text-info" data-id="' . $post->id . '" title="Deactivate">
-                    <i class="bx bx-show"></i>
+                ? '<a href="javascript:void(0);" class="toggle-status text-info" 
+                 data-id="' . $post->id . '" title="Deactivate">
+                 <i class="bx bx-show"></i>
                </a>'
-                : '<a href="javascript:void(0);" class="toggle-status text-danger" data-id="' . $post->id . '" title="Activate">
-                    <i class="bx bx-hide"></i>
+                : '<a href="javascript:void(0);" class="toggle-status text-danger" 
+                 data-id="' . $post->id . '" title="Activate">
+                 <i class="bx bx-hide"></i>
                </a>';
 
             $action_ui = '<div class="d-flex order-actions">
-                        <a href="' . base_url('admin/post/post_edit/' . $post->id) . '" class="me-3 text-primary" title="Edit">
+                        <a href="' . base_url('admin/post/post_edit/' . $post->id) . '" 
+                           class="me-3 text-primary" title="Edit">
                             <i class="bx bx-edit"></i>
                         </a>
                         ' . $eye_icon . '
                       </div>';
 
-            // Row
             $html .= '<tr>
                     <td>' . $index++ . '</td>
                     <td>' . $post->title . '</td>
@@ -96,16 +101,44 @@ class Post extends CI_Controller
                   </tr>';
         }
 
-        // Pagination
-        $total_pages = ceil($total / $limit);
-        $pagination = '';
-        for ($i = 1; $i <= $total_pages; $i++) {
-            $active = ($i == $page) ? 'active' : '';
-            $pagination .= '<li class="page-item ' . $active . '"><a class="page-link" href="#" data-page="' . $i . '">' . $i . '</a></li>';
+        if (empty($html)) {
+            $html = '<tr><td colspan="5" class="text-center">No posts found</td></tr>';
         }
 
-        echo json_encode(['html' => $html, 'pagination' => $pagination]);
+        /* ----------- PAGINATION WITH « and » ----------- */
+        $total_pages = ceil($total / $limit);
+        $pagination  = '';
+
+        if ($total_pages > 1) {
+
+            // « Previous
+            $pagination .= '
+        <li class="page-item ' . ($page <= 1 ? 'disabled' : '') . '">
+            <a class="page-link" href="#" data-page="' . ($page - 1) . '">&laquo;</a>
+        </li>';
+
+            // Page numbers
+            for ($i = 1; $i <= $total_pages; $i++) {
+                $active = ($i == $page) ? 'active' : '';
+                $pagination .= '
+            <li class="page-item ' . $active . '">
+                <a class="page-link" href="#" data-page="' . $i . '">' . $i . '</a>
+            </li>';
+            }
+
+            // Next »
+            $pagination .= '
+        <li class="page-item ' . ($page >= $total_pages ? 'disabled' : '') . '">
+            <a class="page-link" href="#" data-page="' . ($page + 1) . '">&raquo;</a>
+        </li>';
+        }
+
+        echo json_encode([
+            'html'       => $html,
+            'pagination' => $pagination
+        ]);
     }
+
 
 
 
@@ -125,7 +158,6 @@ class Post extends CI_Controller
         $this->load->view('admin/header');
         $this->load->view('admin/post_form');
         $this->load->view('admin/footer');
-
     }
 
     public function post_edit($id)
@@ -187,14 +219,12 @@ class Post extends CI_Controller
         $this->load->view('admin/header');
         $this->load->view('admin/blog_view');
         $this->load->view('admin/footer');
-
     }
     public function add_blog()
     {
         $this->load->view('admin/header');
         $this->load->view('admin/blog_form');
         $this->load->view('admin/footer');
-
     }
 
     public function blog_category()
@@ -383,7 +413,6 @@ class Post extends CI_Controller
                 'html' => $html,
                 'pagination' => $pagination
             ]);
-
         } catch (Exception $e) {
             echo json_encode([
                 'html' => '<tr><td colspan="6" class="text-danger text-center">' . $e->getMessage() . '</td></tr>',
@@ -546,7 +575,6 @@ class Post extends CI_Controller
                 'html' => $html,
                 'pagination' => $pagination
             ]);
-
         } catch (Exception $e) {
             echo json_encode([
                 'status' => false,
@@ -610,7 +638,4 @@ class Post extends CI_Controller
             ]);
         }
     }
-
-
-
 }

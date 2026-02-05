@@ -81,12 +81,65 @@
     </div>
 </div>
 
+<style>
+    /* ===== CLEAN ADMIN PAGINATION ===== */
+    #pagination {
+        margin-top: 15px;
+    }
+
+    /* Container alignment */
+    #pagination.pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Each page box */
+    #pagination .page-item .page-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        /* soft square look */
+        border: 1px solid #007bff;
+        /* your brand color */
+        color: #007bff;
+        font-weight: 600;
+        background: #ffffff;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Hover effect */
+    #pagination .page-link:hover {
+        background: #007bff;
+        color: white;
+    }
+
+    /* Active page */
+    #pagination .active .page-link {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    /* Disabled arrows */
+    #pagination .disabled .page-link {
+        color: #b0b0b0;
+        border-color: #ddd;
+        background: #f5f5f5;
+        pointer-events: none;
+    }
+</style>
+
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 
 
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         let currentPage = 1;
 
@@ -99,9 +152,12 @@
             $.ajax({
                 url: "<?= base_url('admin/post/get_all_categories'); ?>",
                 type: "GET",
-                data: { page: page, search: search },
+                data: {
+                    page: page,
+                    search: search
+                },
                 dataType: "json",
-                success: function (res) {
+                success: function(res) {
 
                     if (!res.status) {
                         $('#blog_category').html(
@@ -116,7 +172,7 @@
                     $('#blog_category').html(res.html);
                     $('#pagination').html(res.pagination);
                 },
-                error: function () {
+                error: function() {
                     $('#blog_category').html(
                         '<tr><td colspan="3" class="text-center text-danger">Server error</td></tr>'
                     );
@@ -125,7 +181,7 @@
         }
 
         // Pagination click
-        $(document).on('click', '#pagination a', function (e) {
+        $(document).on('click', '#pagination a', function(e) {
             e.preventDefault();
             let page = $(this).data('page');
             if (!page) return;
@@ -134,18 +190,18 @@
         });
 
         // Search
-        $('#search').on('keyup', function () {
+        $('#search').on('keyup', function() {
             loadCategories(1, $(this).val());
         });
 
         // Add category
-        $('#addCategoryForm').on('submit', function (e) {
+        $('#addCategoryForm').on('submit', function(e) {
             e.preventDefault();
 
             $.post(
                 "<?= base_url('admin/post/add_category'); ?>",
                 $(this).serialize(),
-                function (res) {
+                function(res) {
                     alert(res.message);
                     if (res.status) {
                         $('#addCategoryForm')[0].reset();
@@ -158,20 +214,20 @@
         });
 
         // Open edit modal
-        $(document).on('click', '.editCategory', function () {
+        $(document).on('click', '.editCategory', function() {
             $('#editCategoryId').val($(this).data('id'));
             $('#editCategoryTitle').val($(this).data('title'));
             $('#editCategoryModal').modal('show');
         });
 
         // Update category
-        $('#editCategoryForm').on('submit', function (e) {
+        $('#editCategoryForm').on('submit', function(e) {
             e.preventDefault();
 
             $.post(
                 "<?= base_url('admin/post/update_category'); ?>",
                 $(this).serialize(),
-                function (res) {
+                function(res) {
                     alert(res.message);
                     if (res.status) {
                         $('#editCategoryModal').modal('hide');
@@ -183,14 +239,14 @@
         });
 
         // Delete category
-        $(document).on('click', '.deleteCategory', function () {
+        $(document).on('click', '.deleteCategory', function() {
             let id = $(this).data('id');
 
             if (!confirm('Delete this category?')) return;
 
             $.post(
                 "<?= base_url('admin/post/delete_category/'); ?>" + id,
-                function (res) {
+                function(res) {
                     alert(res.message);
                     if (res.status) {
                         loadCategories(currentPage, $('#search').val());

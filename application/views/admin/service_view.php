@@ -85,11 +85,80 @@
 </div>
 </div>
 
+<style>
+    /* ===== SERVICES PAGE – MATCHED PAGINATION STYLE ===== */
+
+    #pagination {
+        margin-top: 18px;
+    }
+
+    /* Center alignment (same as all your pages) */
+    #pagination.pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Page buttons – SAME DESIGN AS OTHER PAGES */
+    #pagination .page-item .page-link {
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        /* soft square look */
+        border: 1px solid #007bff;
+        /* your brand color */
+        color: #007bff;
+        font-weight: 600;
+        background: #ffffff;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Hover effect */
+    #pagination .page-link:hover {
+        background: #007bff;
+        color: white;
+    }
+
+    /* Active page */
+    #pagination .active .page-link {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    /* Disabled buttons */
+    #pagination .disabled .page-link {
+        color: #b0b0b0;
+        border-color: #ddd;
+        background: #f5f5f5;
+        pointer-events: none;
+    }
+
+    /* Make arrows same size as numbers (if you use them later) */
+    #pagination #prevPage,
+    #pagination #nextPage {
+        padding: 0 10px;
+    }
+
+    /* Mobile adjustment */
+    @media (max-width: 576px) {
+        #pagination .page-item .page-link {
+            min-width: 34px;
+            height: 34px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         loadServices(1, '');
 
@@ -97,8 +166,11 @@
             $.ajax({
                 url: "<?= base_url('admin/service/get_services_ajax') ?>",
                 type: "GET",
-                data: { page: page, search: search },
-                success: function (res) {
+                data: {
+                    page: page,
+                    search: search
+                },
+                success: function(res) {
                     let data = JSON.parse(res);
                     $('#blog').html(data.html);
                     $('#pagination').html(data.pagination);
@@ -107,7 +179,7 @@
         }
 
         // Pagination
-        $(document).on('click', '#pagination a', function (e) {
+        $(document).on('click', '#pagination a', function(e) {
             e.preventDefault();
             let page = $(this).data('page');
             let search = $('#search').val();
@@ -115,12 +187,12 @@
         });
 
         // Search
-        $('#search').on('keyup', function () {
+        $('#search').on('keyup', function() {
             loadServices(1, $(this).val());
         });
 
         // Delete
-        $(document).on('click', '.delete-service', function () {
+        $(document).on('click', '.delete-service', function() {
             let id = $(this).data('id');
 
             Swal.fire({
@@ -138,10 +210,9 @@
                         dataType: "json",
                         data: {
                             id: id,
-                            '<?= $this->security->get_csrf_token_name(); ?>':
-                                '<?= $this->security->get_csrf_hash(); ?>'
+                            '<?= $this->security->get_csrf_token_name(); ?>': '<?= $this->security->get_csrf_hash(); ?>'
                         },
-                        success: function (res) {
+                        success: function(res) {
                             if (res.status) {
                                 Swal.fire({
                                     icon: 'success',
@@ -158,7 +229,7 @@
                                 Swal.fire('Error', res.message, 'error');
                             }
                         },
-                        error: function () {
+                        error: function() {
                             Swal.fire('Error', 'Delete request failed!', 'error');
                         }
                     });

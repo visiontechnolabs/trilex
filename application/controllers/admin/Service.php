@@ -25,9 +25,7 @@ class Service extends CI_Controller
         if (!$this->session->userdata('admin')) {
 
             redirect('admin');
-
         }
-
     }
 
     public function index()
@@ -36,7 +34,6 @@ class Service extends CI_Controller
         $this->load->view('admin/header');
         $this->load->view('admin/service_category_view');
         $this->load->view('admin/footer');
-
     }
     public function get_main_categories()
     {
@@ -72,7 +69,7 @@ class Service extends CI_Controller
     public function get_all_categories()
     {
         $page = $this->input->get('page') ? (int)$this->input->get('page') : 1;
-        $limit = $this->input->get('limit') ? (int)$this->input->get('limit') : 10;
+        $limit = $this->input->get('limit') ? (int)$this->input->get('limit') : 5;
         $search = $this->input->get('search') ? trim($this->input->get('search')) : '';
         $offset = ($page - 1) * $limit;
 
@@ -195,49 +192,99 @@ class Service extends CI_Controller
 
     public function get_services_ajax()
     {
-        $page = $this->input->get('page') ?? 1;
+        $page   = (int) $this->input->get('page') ?: 1;
         $search = $this->input->get('search');
-        $limit = 5;
+        $limit  = 5;
         $offset = ($page - 1) * $limit;
+
+        /* ---------- CORRECT COUNT (MOST IMPORTANT FIX) ---------- */
+        $this->db->from('services');
+        if (!empty($search)) {
+            $this->db->like('title', $search);
+        }
+        $total = $this->db->count_all_results();
+
+        /* ---------- FETCH DATA (NEW QUERY BUILDER) ---------- */
+        $this->db->select('services.*, service_category.title as category');
+        $this->db->from('services');
+        $this->db->join(
+            'service_category',
+            'service_category.id = services.category_id',
+            'left'
+        );
+
         if (!empty($search)) {
             $this->db->like('services.title', $search);
         }
-        $total = $this->db->count_all_results('services', false);
-        $this->db->select('services.*, service_category.title as category');
-        $this->db->join('service_category', 'service_category.id = services.category_id', 'left');
-        $this->db->limit($limit, $offset);
+
         $this->db->order_by('services.id', 'DESC');
+        $this->db->limit($limit, $offset);
+
         $query = $this->db->get()->result();
+
+        /* ---------- BUILD TABLE HTML ---------- */
         $html = '';
         $i = $offset + 1;
+
         foreach ($query as $row) {
-            $html .= ' 
-            <tr> 
-            <td>' . $i++ . '</td> 
-            <td>' . ($row->category ?? '-') . '</td> 
-            <td>' . $row->title . '</td> 
-            <td>' . substr(strip_tags($row->description), 0, 80) . '</td> 
-            <td> 
-                <a href="' . base_url('admin/service/edit_service/' . $row->id) . '" class="btn btn-sm btn-primary"> 
-                <i class="bx bx-edit"></i> 
-                </a> 
-                <button class="btn btn-sm btn-danger delete-service" data-id="' . $row->id . '"> 
-                <i class="bx bx-trash"></i> 
-                </button> 
-            </td> 
-            </tr>';
+            $html .= '
+        <tr>
+            <td>' . $i++ . '</td>
+            <td>' . ($row->category ?? '-') . '</td>
+            <td>' . $row->title . '</td>
+            <td>' . substr(strip_tags($row->description), 0, 80) . '</td>
+            <td>
+                <a href="' . base_url('admin/service/edit_service/' . $row->id) . '" 
+                   class="btn btn-sm btn-primary">
+                   <i class="bx bx-edit"></i>
+                </a>
+
+                <button class="btn btn-sm btn-danger delete-service" 
+                        data-id="' . $row->id . '">
+                   <i class="bx bx-trash"></i>
+                </button>
+            </td>
+        </tr>';
         }
+
         if (empty($html)) {
             $html = '<tr><td colspan="5" class="text-center">No services found</td></tr>';
         }
+
+        /* ---------- FIXED PAGINATION WITH « » ---------- */
         $pages = ceil($total / $limit);
         $pagination = '';
-        for ($i = 1; $i <= $pages; $i++) {
-            $active = ($i == $page) ? 'active' : '';
-            $pagination .= ' <li class="page-item ' . $active . '"> <a href="#" class="page-link" data-page="' . $i . '">' . $i . '</a> </li>';
+
+        if ($pages > 1) {
+
+            // « Previous
+            $pagination .= '
+        <li class="page-item ' . ($page <= 1 ? 'disabled' : '') . '">
+            <a href="#" class="page-link" data-page="' . ($page - 1) . '">&laquo;</a>
+        </li>';
+
+            // Page numbers
+            for ($i = 1; $i <= $pages; $i++) {
+                $active = ($i == $page) ? 'active' : '';
+                $pagination .= '
+            <li class="page-item ' . $active . '">
+                <a href="#" class="page-link" data-page="' . $i . '">' . $i . '</a>
+            </li>';
+            }
+
+            // Next »
+            $pagination .= '
+        <li class="page-item ' . ($page >= $pages ? 'disabled' : '') . '">
+            <a href="#" class="page-link" data-page="' . ($page + 1) . '">&raquo;</a>
+        </li>';
         }
-        echo json_encode(['html' => $html, 'pagination' => $pagination]);
+
+        echo json_encode([
+            'html' => $html,
+            'pagination' => $pagination
+        ]);
     }
+
 
     public function edit_service($id)
     {
@@ -319,6 +366,4 @@ class Service extends CI_Controller
             ]);
         }
     }
-
-
 }

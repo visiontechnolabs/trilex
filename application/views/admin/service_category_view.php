@@ -61,9 +61,69 @@
   <ul class="pagination justify-content-center" id="pagination"></ul>
 </nav>
 
+<style>
+  /* ===== CLEAN ADMIN PAGINATION (SERVICE CATEGORY PAGE) ===== */
+
+  #pagination {
+    margin-top: 15px;
+  }
+
+  /* Align in center */
+  #pagination.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Page buttons */
+  #pagination .page-item .page-link {
+    min-width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    /* soft square look */
+    border: 1px solid #007bff;
+    /* your brand color */
+    color: #007bff;
+    font-weight: 600;
+    background: #ffffff;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Hover */
+  #pagination .page-link:hover {
+    background: #007bff;
+    color: white;
+  }
+
+  /* Active page */
+  #pagination .active .page-link {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  /* Disabled (Previous / Next) */
+  #pagination .disabled .page-link {
+    color: #b0b0b0;
+    border-color: #ddd;
+    background: #f5f5f5;
+    pointer-events: none;
+  }
+
+  /* Make Previous/Next same size */
+  #pagination .page-item:first-child .page-link,
+  #pagination .page-item:last-child .page-link {
+    padding: 0 12px;
+  }
+</style>
+
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script>
-  $(document).ready(function () {
+  $(document).ready(function() {
 
     var selectedParent = null; // Variable to store selected parent for edit
 
@@ -72,13 +132,17 @@
       $.ajax({
         url: "<?= base_url('admin/service/get_all_categories'); ?>",
         type: "GET",
-        data: { page: page, search: search, limit: 10 },
+        data: {
+          page: page,
+          search: search,
+          limit: 5
+        },
         dataType: "json",
-        success: function (res) {
+        success: function(res) {
           if (res.status && res.data.length > 0) {
             let rows = '';
             let startIndex = (page - 1) * 10 + 1;
-            $.each(res.data, function (index, cat) {
+            $.each(res.data, function(index, cat) {
               rows += `
               <tr>
                 <td>${startIndex + index}</td>
@@ -109,7 +173,7 @@
             if (total_pages > 1) {
               // Previous
               pagination += `<li class="page-item ${current_page == 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" data-page="${current_page - 1}">Previous</a>
+                <a class="page-link" href="#" data-page="${current_page - 1}">&laquo;</a>
               </li>`;
 
               // Pages
@@ -121,7 +185,7 @@
 
               // Next
               pagination += `<li class="page-item ${current_page == total_pages ? 'disabled' : ''}">
-                <a class="page-link" href="#" data-page="${current_page + 1}">Next</a>
+                <a class="page-link" href="#" data-page="${current_page + 1}">&raquo;</a>
               </li>`;
             }
 
@@ -144,10 +208,10 @@
         url: "<?= base_url('admin/service/get_main_categories'); ?>",
         type: "GET",
         dataType: "json",
-        success: function (res) {
+        success: function(res) {
           let options = '<option value="">-- None (Create Main Category) --</option>';
           if (res.status && res.data.length > 0) {
-            $.each(res.data, function (i, cat) {
+            $.each(res.data, function(i, cat) {
               options += `<option value="${cat.id}">${cat.title}</option>`;
             });
           }
@@ -162,7 +226,7 @@
     }
 
     // Edit category
-    $(document).on('click', '.editCategory', function () {
+    $(document).on('click', '.editCategory', function() {
       let id = $(this).data('id');
       let title = $(this).data('title');
       let parent = $(this).data('parent');
@@ -176,14 +240,14 @@
     });
 
     // Delete category
-    $(document).on('click', '.deleteCategory', function () {
+    $(document).on('click', '.deleteCategory', function() {
       let id = $(this).data('id');
       if (confirm('Are you sure you want to delete this category?')) {
         $.ajax({
           url: "<?= base_url('admin/service/delete_category/'); ?>" + id,
           type: "POST",
           dataType: "json",
-          success: function (res) {
+          success: function(res) {
             alert(res.message);
             if (res.status) loadCategories();
           }
@@ -192,7 +256,7 @@
     });
 
     // Open modal and load categories
-    $('#addCategoryModal').on('show.bs.modal', function () {
+    $('#addCategoryModal').on('show.bs.modal', function() {
       if (!$('#edit_id').val()) {
         // Reset form for add
         $('#addCategoryForm')[0].reset();
@@ -204,7 +268,7 @@
     });
 
     // Submit form
-    $('#addCategoryForm').on('submit', function (e) {
+    $('#addCategoryForm').on('submit', function(e) {
       e.preventDefault();
 
       let url = $('#edit_id').val() ? "<?= base_url('admin/service/update_category'); ?>" : "<?= base_url('admin/service/add_category'); ?>";
@@ -214,7 +278,7 @@
         type: "POST",
         data: $(this).serialize(),
         dataType: "json",
-        success: function (res) {
+        success: function(res) {
           alert(res.message);
           if (res.status) {
             $('#addCategoryForm')[0].reset();
@@ -227,7 +291,7 @@
     });
 
     // Pagination Click
-    $(document).on('click', '.page-link', function (e) {
+    $(document).on('click', '.page-link', function(e) {
       e.preventDefault();
       let page = $(this).data('page');
       let search = $('#search').val();
@@ -235,7 +299,7 @@
     });
 
     // Search
-    $('#search').on('keyup', function () {
+    $('#search').on('keyup', function() {
       loadCategories(1, $(this).val());
     });
 

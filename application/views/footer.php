@@ -1,8 +1,13 @@
 <!-- Footer -->
 <style>
+
+    :root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
     /* Footer Styles */
     footer {
-        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: var(--light-color);
         padding: 60px 0 0;
         position: relative;
@@ -351,7 +356,7 @@
                     </div>
                     <div class="contact-info-item">
                         <i class="fas fa-envelope me-2"></i>
-                        <span>info@nexusexcel.com</span>
+                        <span>info@trilexadvisories.com</span>
                     </div>
                     <div class="contact-info-item">
                         <i class="fas fa-clock me-2"></i>
@@ -367,7 +372,7 @@
         <div class="footer-bottom">
             <div class="row align-items-center">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <p>&copy; 2024 Nexusexcel Advisories. All Rights Reserved.</p>
+                    <p>&copy; 2026 Trilex Advisories. All Rights Reserved.</p>
                 </div>
                 <div class="col-md-6">
                     <p>

@@ -1,3 +1,51 @@
+<style>
+:root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: #fff;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+    }
+
+    .service-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        text-align: center;
+        color: #fff;
+    }
+
+    .service-description {
+        max-width: 100%;
+        overflow: visible !important;
+        padding: 10px 0;
+    }
+
+    .ck-content {
+        overflow: visible !important;
+        white-space: normal !important;
+        word-wrap: break-word;
+        line-height: 1.6;
+    }
+
+    .ck-content pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            margin-top: 5rem;
+        }
+    }
+</style>
+
 <div class="container">
     <?php if (isset($service) && !empty($service)): ?>
         <!-- ✅ Hero Section -->
@@ -21,25 +69,6 @@
 
             <span class="section-label">Service Description</span>
 
-            <style>
-                .service-description {
-                    max-width: 100%;
-                    overflow: visible !important;
-                    padding: 10px 0;
-                }
-
-                .ck-content {
-                    overflow: visible !important;
-                    white-space: normal !important;
-                    word-wrap: break-word;
-                    line-height: 1.6;
-                }
-
-                .ck-content pre {
-                    white-space: pre-wrap;
-                    word-break: break-word;
-                }
-            </style>
 
             <div class="service-description">
                 <?php if (!empty($service['description'])): ?>

@@ -78,21 +78,59 @@
 
         </div>
 
-        <nav aria-label="Page navigation example">
-
-            <ul class="pagination round-pagination justify-content-center" id="pagination"></ul>
-
+        <nav aria-label="Page navigation">
+            <ul class="pagination trilex-pagination" id="pagination"></ul>
         </nav>
 
     </div>
 
 </div>
 </div>
+
+<style>
+    /* ===== TRILEX VERTICAL BOXED PAGINATION ===== */
+
+    .trilex-pagination {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 6px;
+    }
+
+    /* Each page box */
+    .trilex-pagination .page-item .page-link {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #007bff;
+        color: #007bff;
+        font-weight: 600;
+        border-radius: 8px;
+        /* Slightly rounded like your image */
+        background: white;
+    }
+
+    /* Active page */
+    .trilex-pagination .active .page-link {
+        background: #007bff;
+        color: white;
+    }
+
+    /* Hover effect */
+    .trilex-pagination .page-link:hover {
+        background: #0056b3;
+        color: white;
+    }
+</style>
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         let currentPage = 1;
 
@@ -111,17 +149,19 @@
                     search: search
                 },
                 dataType: "json",
-                success: function (data) {
+                success: function(data) {
                     if (data.html !== undefined) {
                         $('#blog').html(data.html);
                         $('#pagination').html(data.pagination);
+
+
                     } else {
                         $('#blog').html(
                             '<tr><td colspan="6" class="text-center text-muted">No blogs found</td></tr>'
                         );
                     }
                 },
-                error: function () {
+                error: function() {
                     $('#blog').html(
                         '<tr><td colspan="6" class="text-center text-danger">Error loading blogs</td></tr>'
                     );
@@ -130,7 +170,7 @@
         }
 
         // Pagination click
-        $(document).on('click', '#pagination a', function (e) {
+        $(document).on('click', '#pagination a', function(e) {
             e.preventDefault();
 
             let page = $(this).data('page');
@@ -141,34 +181,33 @@
         });
 
         // Search
-        $('#search').on('keyup', function () {
+        $('#search').on('keyup', function() {
             let search = $(this).val();
             loadBlogs(1, search);
         });
 
         // Toggle status (Active / Inactive)
-        $(document).on('click', '.toggle-status', function () {
+        $(document).on('click', '.toggle-status', function() {
             let id = $(this).data('id');
 
             $.ajax({
                 url: "<?= base_url('admin/post/toggle_status_blog/') ?>" + id,
                 type: "GET",
                 dataType: "json",
-                success: function (res) {
+                success: function(res) {
 
                     Swal.fire({
                         icon: res.status == 1 ? 'success' : 'warning',
                         title: res.status == 1 ? 'Activated' : 'Deactivated',
-                        text: res.status == 1
-                            ? 'Blog is now active!'
-                            : 'Blog is now inactive!',
+                        text: res.status == 1 ?
+                            'Blog is now active!' : 'Blog is now inactive!',
                         timer: 1200,
                         showConfirmButton: false
                     });
 
                     loadBlogs(currentPage, $('#search').val());
                 },
-                error: function () {
+                error: function() {
                     console.error('Error toggling blog status');
                 }
             });

@@ -17,7 +17,7 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-blue" style="--percent:65%"  
+            <div class="stat-card stat-rose" style="--percent:65%"
                 onclick="window.location.href='<?= base_url('post') ?>'">
                 <div class="stat-header">
                     <div>
@@ -30,7 +30,7 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-green" style="--percent:80%" 
+            <div class="stat-card stat-green" style="--percent:80%"
                 onclick="window.location.href='<?= base_url('blog_category') ?>'">
                 <div class="stat-header">
                     <div>
@@ -43,7 +43,7 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-yellow" style="--percent:70%" 
+            <div class="stat-card stat-yellow" style="--percent:70%"
                 onclick="window.location.href='<?= base_url('blogs') ?>'">
                 <div class="stat-header">
                     <div>
@@ -56,7 +56,7 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-red" style="--percent:55%" 
+            <div class="stat-card stat-lime" style="--percent:55%"
                 onclick="window.location.href='<?= base_url('order') ?>'">
                 <div class="stat-header">
                     <div>
@@ -69,7 +69,20 @@
                 <div class="stat-progress"><span></span></div>
             </div>
 
-            <div class="stat-card stat-green" style="--percent:90%"
+            <div class="stat-card stat-purple" style="--percent:75%"
+                onclick="window.location.href='<?= base_url('service_category') ?>'">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Services Categories</div>
+                        <div class="stat-value"><?= $service_category_count ?></div>
+                        <div class="stat-meta">Organized Services</div>
+                    </div>
+                    <div class="stat-icon"><i class="bx bxs-layer"></i></div>
+                </div>
+                <div class="stat-progress"><span></span></div>
+            </div>
+
+            <div class="stat-card stat-cyan" style="--percent:85%"
                 onclick="window.location.href='<?= base_url('all_service') ?>'">
                 <div class="stat-header">
                     <div>
@@ -77,7 +90,20 @@
                         <div class="stat-value"><?= $service_count ?></div>
                         <div class="stat-meta">Operational</div>
                     </div>
-                    <div class="stat-icon"><i class="bx bxs-wrench"></i></div>
+                    <div class="stat-icon"><i class="bx bxs-cog"></i></div>
+                </div>
+                <div class="stat-progress"><span></span></div>
+            </div>
+
+            <div class="stat-card stat-orange" style="--percent:99%"
+                onclick="window.location.href='<?= base_url('qr_codes') ?>'">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">QR Codes</div>
+                        <div class="stat-value"><?= $qr_count ?></div>
+                        <div class="stat-meta">Generated & Active</div>
+                    </div>
+                    <div class="stat-icon"><i class="bx bx-qr-scan"></i></div>
                 </div>
                 <div class="stat-progress"><span></span></div>
             </div>
@@ -196,8 +222,24 @@
         color: #713f12;
     }
 
-    .stat-red .stat-icon {
-        background: linear-gradient(135deg, #f43f5e, #fb7185);
+    .stat-lime .stat-icon {
+        background: linear-gradient(135deg, #65a30d, #84cc16);
+    }
+
+    .stat-purple .stat-icon {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    }
+
+    .stat-cyan .stat-icon {
+        background: linear-gradient(135deg, #06b6d4, #22d3ee);
+    }
+
+    .stat-orange .stat-icon {
+        background: linear-gradient(135deg, #f97316, #fb923c);
+    }
+
+    .stat-rose .stat-icon {
+        background: linear-gradient(135deg, #e11d48, #fb7185);
     }
 
     /* ================= PROGRESS LINE ================= */

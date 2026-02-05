@@ -1,8 +1,13 @@
 <style>
+    :root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
+
     .product-hero {
         text-align: center;
         padding: 3rem 1rem;
-        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #fff;
         border-radius: 16px;
         margin-bottom: 1rem;
@@ -188,7 +193,7 @@
 
 <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         function isMobile() {
             return window.innerWidth <= 768;
         }
@@ -197,9 +202,12 @@
             $.ajax({
                 url: "<?= base_url('product/fetch_products') ?>",
                 type: "GET",
-                data: { page: page, device: isMobile() ? 'mobile' : 'desktop' },
+                data: {
+                    page: page,
+                    device: isMobile() ? 'mobile' : 'desktop'
+                },
                 dataType: "json",
-                success: function (res) {
+                success: function(res) {
                     $("#product-container").html(res.html);
                     $("#pagination-container").html(res.pagination);
                 }
@@ -208,13 +216,13 @@
 
         loadProducts();
 
-        $(document).on('click', '.pagination a', function (e) {
+        $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             let page = $(this).data('page');
             loadProducts(page);
         });
 
-        $(window).on('resize', function () {
+        $(window).on('resize', function() {
             loadProducts(1); // reload for new device layout
         });
     });

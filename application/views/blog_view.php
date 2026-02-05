@@ -46,11 +46,11 @@
         <!-- PAGINATION CONTROLS -->
         <div id="paginationWrapper" class="text-center my-5 w-100">
             <div class="pagination-container">
-                <button id="prevBtn" class="page-btn" disabled>Prev</button>
+                <button id="prevBtn" class="page-btn" disabled>&laquo;</button>
 
                 <div id="pageNumbers" class="page-numbers"></div>
 
-                <button id="nextBtn" class="page-btn">Next</button>
+                <button id="nextBtn" class="page-btn">&raquo;</button>
             </div>
         </div>
 
@@ -59,6 +59,11 @@
 
 <!-- ================= CSS (REQUIRED) ================= -->
 <style>
+    :root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
+
     #paginationWrapper {
         display: none;
     }
@@ -109,7 +114,7 @@
     }
 
     .page-btn:hover {
-        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #fff;
     }
 
@@ -129,7 +134,7 @@
     .blog-hero {
         text-align: center;
         padding: 3rem 1rem;
-        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #fff;
         border-radius: 16px;
         margin-bottom: 1rem;
@@ -237,7 +242,7 @@
         height: 48px;
         border-radius: 50%;
         border: none;
-        background: linear-gradient(135deg, var(--secondary-color), var(--dark-color));
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #fff;
         display: flex;
         align-items: center;
@@ -284,9 +289,9 @@
     .category-btn {
         padding: 10px 26px;
         border-radius: 30px;
-        border: 2px solid #6c7cff;
+        border: 2px solid var(--primary-color);
         background: #ffffff;
-        color: #6c7cff;
+        color: var(--primary-color);
         font-weight: 500;
         text-decoration: none;
         transition: all 0.3s ease;
@@ -295,9 +300,9 @@
 
     /* Hover */
     .category-btn:hover {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #ffffff;
-        box-shadow: 0 6px 15px rgba(108, 124, 255, 0.35);
+        box-shadow: 0 6px 15px rgba(28, 118, 143, 0.35);
         transform: translateY(-2px);
     }
 
@@ -374,7 +379,7 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const buttons = document.querySelectorAll('.category-btn');
         const blogContainer = document.getElementById('blogContainer');
         const prevBtn = document.getElementById('prevBtn');
@@ -417,13 +422,15 @@
             }
 
             fetch("<?= base_url('blog/fetchBlogs'); ?>", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
 
-                body: "category_id=" + encodeURIComponent(category) +
-                    "&page=" + page +
-                    "&search=" + encodeURIComponent(serverSearch)
-            })
+                    body: "category_id=" + encodeURIComponent(category) +
+                        "&page=" + page +
+                        "&search=" + encodeURIComponent(serverSearch)
+                })
                 .then(res => res.text())
                 .then(html => {
 
@@ -451,8 +458,7 @@
 
                             if (title.startsWith(query)) {
                                 startsWith.push(blog);
-                            }
-                            else if (title.includes(query)) {
+                            } else if (title.includes(query)) {
                                 contains.push(blog);
                             }
                         });
@@ -530,10 +536,13 @@
                     btn.classList.add("active");
                 }
 
-                btn.addEventListener("click", function () {
+                btn.addEventListener("click", function() {
                     currentPage = i;
                     loadBlogs(currentPage, selectedCategory, searchQuery);
-                    window.scrollTo({ top: 0, behavior: "smooth" }); // nice UX
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    }); // nice UX
                 });
 
                 pageNumbersDiv.appendChild(btn);
@@ -542,7 +551,7 @@
 
         // Category click
         buttons.forEach(btn => {
-            btn.addEventListener('click', function (e) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
 
                 buttons.forEach(b => b.classList.remove('active'));
@@ -556,20 +565,26 @@
         });
 
         // Next button
-        nextBtn.addEventListener('click', function () {
+        nextBtn.addEventListener('click', function() {
             if (currentPage < totalPages) {
                 currentPage++;
                 loadBlogs(currentPage, selectedCategory, searchQuery);
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
             }
         });
 
         // Previous button
-        prevBtn.addEventListener('click', function () {
+        prevBtn.addEventListener('click', function() {
             if (currentPage > 1) {
                 currentPage--;
                 loadBlogs(currentPage, selectedCategory, searchQuery);
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
             }
         });
 
@@ -581,13 +596,13 @@
         searchInput.addEventListener('input', debouncedSearch);
 
         // Search button click (immediate search)
-        searchBtn.addEventListener('click', function () {
+        searchBtn.addEventListener('click', function() {
             clearTimeout(searchTimeout); // Cancel any pending debounced search
             performSearch();
         });
 
         // Enter key press (immediate search)
-        searchInput.addEventListener('keypress', function (e) {
+        searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 clearTimeout(searchTimeout); // Cancel any pending debounced search
                 performSearch();

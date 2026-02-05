@@ -104,7 +104,7 @@ public function fetch_orders_ajax()
 {
     $page   = $this->input->post('page') ?? 1;
     $search = $this->input->post('search') ?? '';
-    $limit  = 10;
+    $limit  = 5;
     $offset = ($page - 1) * $limit;
 
     $this->db->select('orders.*, users.name, users.email');

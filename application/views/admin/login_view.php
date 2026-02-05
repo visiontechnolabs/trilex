@@ -14,7 +14,7 @@
 
 	<!--favicon-->
 
-	<link rel="icon" href="<?= base_url('assets/images/favicon-32x32.png') ?>" type="image/png">
+	<link rel="icon" type="image/png" href="<?= base_url('assets/images/android-chrome-192x192.png'); ?>">
 
 	<!--plugins-->
 
@@ -46,8 +46,40 @@
 
 	<title>Nexusexcel pvt Ltd-Admin</title>
 
-</head>
+	<style>
+		body {
+			background: #f5f7fa;
+		}
 
+
+
+		.section-authentication-signin {
+			min-height: 100vh;
+		}
+
+		.card {
+			border-radius: 16px;
+			box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+		}
+
+		.login-brand img {
+			border-radius: 50%;
+			padding: 6px;
+			background: #f2fbfb;
+		}
+
+		.btn-primary {
+			background: #007bff;
+			border: none;
+		}
+
+		.btn-primary:hover {
+			background: #0056b3;
+		}
+	</style>
+
+
+</head>
 
 
 <body class="">
@@ -70,56 +102,27 @@
 
 								<?php if ($this->session->flashdata('success')): ?>
 
-
-
 									<div class="alert alert-success border-0 bg-success alert-dismissible fade show py-2">
-
-
 
 										<div class="d-flex align-items-center">
 
-
-
 											<div class="font-35 text-white"><i class="bx bxs-check-circle"></i></div>
-
-
 
 											<div class="ms-3">
 
-
-
 												<!-- <h6 class="mb-0 text-white">Success Alerts</h6> -->
-
-
 
 												<div class="text-white">
 
-
-
 													<?= $this->session->flashdata('success'); ?>
-
-
 
 												</div>
 
-
-
 											</div>
-
-
-
 										</div>
-
-
-
 										<button type="button" class="btn-close" data-bs-dismiss="alert"
 											aria-label="Close"></button>
-
-
-
 									</div>
-
-
 
 								<?php endif; ?>
 
@@ -194,48 +197,27 @@
 
 
 
-
-
-
-
 								<!-- alerts end -->
-
-
-
-
 
 								<div class="p-4">
 
-									<div class="mb-3 text-center">
-
-										<img src="<?= base_url('assets/images/logo-icon.png') ?>" width="60" alt="" />
-
-									</div>
-
-									<div class="text-center mb-4">
-
-										<h5 class="">Nexusexcel</h5>
-
-										<p class="mb-0">Please log in to your account</p>
-
+									<div class="login-brand text-center mb-4">
+										<img src="<?= base_url('assets/images/logo_new.png	') ?>" width="70" alt="Company Logo" />
+										<h4 class="mt-3 fw-bold">Trilex Advisory</h4>
+										<p class="text-muted">Secure Admin Login</p>
 									</div>
 
 									<div class="form-body">
 
-										<form class="row g-3  login-form needs-validation" id="loginForm"
-											<?= base_url('admin') ?> method="post" novalidate>
+										<form class="row g-3 login-form needs-validation" id="loginForm"
+											action="<?= base_url('admin') ?>" method="post" novalidate>
+
 
 											<div class="col-12">
-
 												<label for="inputEmailAddress" class="form-label">Mobile</label>
-
 												<input type="text" name="mobile" class="form-control"
-													id="inputEmailAddress" placeholder="1234">
-
+													id="inputEmailAddress" placeholder="+91 9090123456">
 												<div class="invalid-feedback">Please enter your Mobile.</div>
-
-
-
 											</div>
 
 											<div class="col-12">
@@ -267,7 +249,10 @@
 
 												<div class="d-grid">
 
-													<button type="submit" class="btn btn-primary">Sign in</button>
+													<button type="submit" class="btn btn-primary btn-lg w-100 shadow">
+														Sign in to Dashboard
+													</button>
+
 
 												</div>
 
@@ -322,10 +307,9 @@
 	<!--Password show & hide js -->
 
 	<script>
+		$(document).ready(function() {
 
-		$(document).ready(function () {
-
-			$("#show_hide_password a").on('click', function (event) {
+			$("#show_hide_password a").on('click', function(event) {
 
 				event.preventDefault();
 
@@ -350,7 +334,6 @@
 			});
 
 		});
-
 	</script>
 
 	<!--app JS-->
