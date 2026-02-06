@@ -44,7 +44,7 @@
 
 	<link href="<?= base_url('assets/css/icons.css') ?>" rel="stylesheet">
 
-	<title>Nexusexcel pvt Ltd-Admin</title>
+	<title>Trilex Advisory - Admin</title>
 
 	<style>
 		body {

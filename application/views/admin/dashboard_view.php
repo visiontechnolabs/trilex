@@ -256,7 +256,7 @@
         height: 100%;
         width: var(--percent);
         border-radius: 999px;
-        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        background: #007bff;
     }
 
     /* ================= MOBILE ================= */

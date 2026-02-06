@@ -590,7 +590,7 @@
     .cta-section {
         text-align: center;
         padding: 4rem 2rem;
-        background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-dark) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         border-radius: 24px;
         color: white;
         margin-top: 5rem;
@@ -675,6 +675,7 @@
         .about-hero {
             padding: 3.5rem 1.5rem 3rem;
             margin-bottom: 3.5rem;
+            margin-top: 4.5rem;
             border-radius: 20px;
         }
 

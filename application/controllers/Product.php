@@ -83,7 +83,8 @@ class Product extends CI_Controller
                     </p>
 
                     <a href="' . base_url('product/detail/' . $product->id) . '" 
-                       class="btn btn-primary w-100 fw-semibold" style="background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-color) 100%);">
+                       class="btn btn-primary w-100 fw-semibold" style="
+                       background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);">
                         View Details <i class="fas fa-arrow-up-right-from-square ms-2"></i>
                     </a>
 

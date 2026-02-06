@@ -105,7 +105,7 @@
     .product-card-price {
         font-size: 21px;
         font-weight: 800;
-        color: #16a34a;
+        color: var(--primary-color);
         margin-bottom: 18px;
     }
 
@@ -114,7 +114,7 @@
         margin-top: auto;
         padding: 13px;
         border-radius: 14px;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #ffffff;
         font-weight: 700;
         border: none;
@@ -123,7 +123,7 @@
 
     .product-card .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 26px rgba(99, 102, 241, 0.45);
+        box-shadow: 0 10px 26px rgba(28, 118, 143, 0.45);
     }
 
     /* ---------- PAGINATION ---------- */
@@ -147,12 +147,12 @@
     }
 
     .pagination a:hover {
-        background: #6366f1;
+        background: var(--primary-color);
         color: #ffffff;
     }
 
     .pagination a.active {
-        background: #4f46e5;
+        background: var(--primary-dark);
         color: #ffffff;
         box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
     }

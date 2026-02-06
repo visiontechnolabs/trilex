@@ -65,7 +65,7 @@
     </script>
 
     <!-- Theme Toggle JavaScript -->
-    <script>
+    <!-- <script>
         // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('themeToggle');
@@ -269,7 +269,7 @@
                 themeToggle.addEventListener('click', toggleTheme);
             }
         });
-    </script>
+    </script> -->
 
 </body>
 

@@ -1,12 +1,31 @@
 <style>
-    
+    :root {
+        --primary-color: #1C768F;
+        --primary-dark: #155868;
+    }
+
+    .account-header {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    }
+
+    @media (max-width: 768px) {
+        .account-header {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
 </style>
 
 <div class="container mt-3">
     <!-- Account Tab -->
     <div id="account" class="tab-content active">
         <div class="account-header">
-            <div class="profile-avatar">👤</div>
+            <div class="profile-avatar">🙍🏻‍♂️</div>
             <div class="account-name" id="headerName">
                 <?= isset($user->name) ? htmlspecialchars($user->name) : 'John Doe'; ?>
             </div>

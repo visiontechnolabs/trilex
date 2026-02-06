@@ -6,7 +6,7 @@
 
     /* Profile Card */
     .profile-card {
-        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         border-radius: 20px;
         padding: 40px 20px;
         text-align: center;
@@ -224,13 +224,18 @@
         .stat-number {
             font-size: 28px;
         }
+
+        .profile-card 
+        {
+            margin-top: 4.5rem;
+        }
     }
 </style>
 
 <div class="container">
     <!-- Profile Card -->
     <div class="profile-card">
-        <div class="avatar">👤</div>
+        <div class="avatar">🙍🏻‍♂️</div>
         <div class="profile-name">
             <?= isset($this->session) && $this->session->userdata('user_name') ? htmlspecialchars($this->session->userdata('user_name')) : 'Guest User'; ?>
         </div>
@@ -247,7 +252,7 @@
     <!-- Profile Settings -->
     <div class="menu-section">
         <div class="menu-header">
-            <div class="menu-icon">👤</div>
+            <div class="menu-icon">🙍🏻‍♂️</div>
             <div class="menu-title">Profile Settings</div>
         </div>
         <a href="<?= base_url('account'); ?>" class="submenu-item">

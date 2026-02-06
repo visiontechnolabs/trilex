@@ -84,9 +84,9 @@
     .page-num {
         padding: 8px 14px;
         border-radius: 8px;
-        border: 1.8px solid #6c7cff;
+        border: 1.8px solid #1C768F;
         background: #ffffff;
-        color: #6c7cff;
+        color: #1C768F;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -106,9 +106,9 @@
     .page-btn {
         padding: 8px 18px;
         border-radius: 10px;
-        border: 2px solid #6c7cff;
+        border: 2px solid #1C768F;
         background: #ffffff;
-        color: #6c7cff;
+        color: #1C768F;
         font-weight: 600;
         transition: all 0.3s ease;
     }
@@ -219,7 +219,7 @@
         align-items: center;
         background: #fff;
         border-radius: 50px;
-        border: 2px solid #6c7cff;
+        border: 2px solid #1C768F;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         padding: 6px;
     }
@@ -257,7 +257,7 @@
     .search-loader {
         position: absolute;
         right: 70px;
-        color: #6c7cff;
+        color: #1C768F;
     }
 
     /* ================= CATEGORY FILTER UI ================= */
@@ -308,9 +308,9 @@
 
     /* Active */
     .category-btn.active {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: #ffffff;
-        box-shadow: 0 6px 18px rgba(108, 124, 255, 0.45);
+        box-shadow: 0 6px 18px rgba(28, 118, 143, 0.45);
     }
 
     /* ================= CATEGORY SCROLL BAR ================= */
@@ -328,7 +328,7 @@
     }
 
     .category-scroll::-webkit-scrollbar-thumb {
-        background: #6c7cff;
+        background: var(--primary-color);
         border-radius: 10px;
     }
 
@@ -336,9 +336,9 @@
         white-space: nowrap;
         padding: 10px 26px;
         border-radius: 30px;
-        border: 2px solid #6c7cff;
+        border: 2px solid var(--primary-color);
         background: #fff;
-        color: #6c7cff;
+        color: var(--primary-color);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -346,9 +346,9 @@
 
     .category-btn:hover,
     .category-btn.active {
-        background: #1C768F;
+        background: var(--primary-color);
         color: #fff;
-        box-shadow: 0 6px 15px rgba(108, 124, 255, 0.35);
+        box-shadow: 0 6px 15px rgba(28, 118, 143, 0.35);
     }
 
     /* ================= NO BLOG MESSAGE ================= */
@@ -364,7 +364,7 @@
 
     .no-blog-box i {
         font-size: 3rem;
-        color: #6c7cff;
+        color: var(--primary-color);
         margin-bottom: 15px;
     }
 

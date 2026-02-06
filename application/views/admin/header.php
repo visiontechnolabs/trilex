@@ -144,7 +144,7 @@
             width: 48px;
             height: 48px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #6366f1, #22c55e);
+            background: #007bff;
             padding: 4px;
             display: flex;
             align-items: center;
@@ -333,11 +333,11 @@
                     </button>
 
                     <!-- Theme Toggle Button -->
-                    <button class="theme-toggle-btn" type="button" id="themeToggle"
+                    <!-- <button class="theme-toggle-btn" type="button" id="themeToggle"
                         style="border: none; background: none; font-size: 20px; color: #404142; cursor: pointer; margin-left: 10px; padding: 8px; border-radius: 50%; transition: all 0.3s ease;"
                         title="Toggle Theme">
                         <i class='bx bx-moon' id="themeIcon"></i>
-                    </button>
+                    </button> -->
                 </nav>
             </div>
         </header>

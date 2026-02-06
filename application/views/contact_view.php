@@ -853,7 +853,7 @@
 
     /* CTA Section */
     .contact-cta {
-        background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-dark) 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         border-radius: 24px;
         padding: 4rem 2rem;
         text-align: center;
@@ -961,6 +961,7 @@
         .contact-hero {
             padding: 3.5rem 1.5rem;
             margin-bottom: 3rem;
+            margin-top: 4.5rem;
             border-radius: 20px;
         }
 
