@@ -675,6 +675,7 @@
         .about-hero {
             padding: 3.5rem 1.5rem 3rem;
             margin-bottom: 3.5rem;
+            margin-top: 4.5rem;
             border-radius: 20px;
         }
 

@@ -9,6 +9,9 @@
     <link rel="shortcut icon" type="image/png" href="<?= base_url('assets/images/android-chrome-192x192.png'); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+
     <style>
         :root {
             --primary-color: #1C768F;
@@ -2479,7 +2482,7 @@
 
 <body>
     <?php $segment = $this->uri->segment(1);
-    $CI =& get_instance();
+    $CI = &get_instance();
     $CI->load->database();
 
     // Fetch all categories
@@ -2539,7 +2542,7 @@
                                                     // Convert title into a clean, SEO-friendly slug
                                                     $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $sub['title']));
                                                     $slug = trim($slug, '-');
-                                                    ?>
+                                                ?>
                                                     <li>
                                                         <a class="dropdown-item"
                                                             href="<?= base_url('service/' . $sub['id'] . '/' . $slug); ?>">
@@ -2639,7 +2642,7 @@
                                     <?php foreach ($subcategories[$main['id']] as $sub):
                                         $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $sub['title']));
                                         $slug = trim($slug, '-');
-                                        ?>
+                                    ?>
                                         <li>
                                             <a href="<?= base_url('service/' . $sub['id'] . '/' . $slug); ?>">
                                                 <?= htmlspecialchars($sub['title'], ENT_QUOTES, 'UTF-8'); ?>
@@ -2695,7 +2698,7 @@
     </nav>
 
     <script>
-        (function () {
+        (function() {
 
             const menuToggle = document.getElementById('menuToggle');
             const mobileSidebar = document.getElementById('mobileSidebar');
@@ -2715,7 +2718,7 @@
             }
 
             // ===== OPEN / CLOSE SIDEBAR =====
-            menuToggle.addEventListener('click', function (e) {
+            menuToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -2745,9 +2748,9 @@
 
             // FIX: Services click will NOT close sidebar
             sidebarDropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function (e) {
+                toggle.addEventListener('click', function(e) {
                     e.preventDefault();
-                    e.stopPropagation();   // 🔥 CRITICAL
+                    e.stopPropagation(); // 🔥 CRITICAL
 
                     const parent = this.closest('.sidebar-dropdown');
                     parent.classList.toggle('active');
@@ -2756,7 +2759,7 @@
 
             // Sub-category toggle fix
             sidebarSubmenuToggles.forEach(toggle => {
-                toggle.addEventListener('click', function (e) {
+                toggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -2766,7 +2769,7 @@
             });
 
             // ===== FIX: CLICK OUTSIDE CLOSES SIDEBAR =====
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
 
                 const clickedInsideSidebar = mobileSidebar.contains(e.target);
                 const clickedOnToggle = menuToggle.contains(e.target);
@@ -2779,7 +2782,7 @@
             });
 
             // Prevent clicks inside sidebar from closing it
-            mobileSidebar.addEventListener('click', function (e) {
+            mobileSidebar.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
 
